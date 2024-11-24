@@ -91,3 +91,9 @@ Modul ini berfungsi untuk user dapat register dan login. Nantinya akan ada super
 ### Role User
 
 Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dilakukan keduanya, sudah dijelaskan di atas.
+
+### Alur pengintegrasian dengan aplikasi web
+1. Menyelaraskan tampilan pada *mobile app* dengan *web app*
+2. Menggunakan library `pbp_django_auth` untuk mendukung fungsi autentikasi berbasis cookie, seperti login, logout, dan postJson
+3. Mengimplementasikan Django REST API untuk mensikronisasi data pada *web app* dan *mobile app* dengan memanfaatkan format JSON
+4. Melakukan integrasi antara front-end dan back-end dengan asynchronous HTTP
