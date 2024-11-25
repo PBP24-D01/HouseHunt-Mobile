@@ -80,7 +80,7 @@ Melihat iklan | Membuat, mengedit, menghapus iklan
 Modul ini berfungsi untuk seller melelang rumahnya. Nantinya pembeli dapat menaikan harga bid dan berebut dengan pembeli yang lainnya. Rumah yang sedang dilelang dapat dihapus dari daftar lelang jika belum memasuki waktu lelang. Rumah yang dilelang tidak bisa dijual karena statusnya onAuction.
 Pembeli | Penjual
 -|-
-Memasang rumah untuk dilelang dan menghapus rumah dari daftar lelang jika belum waktu lelang | Mengikuti lelang dengan menaikan harga bid dan berebut dengan pembeli lain
+Mengikuti lelang dengan menaikan harga bid dan berebut dengan pembeli lain  | Memasang rumah untuk dilelang dan menghapus rumah dari daftar lelang jika belum waktu lelang 
 
 #### Authentifikasi
 
