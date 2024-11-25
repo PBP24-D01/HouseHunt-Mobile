@@ -100,7 +100,7 @@ Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dil
 
 <details>
 <summary>
-    ### Alur Pengintegrasian dengan Aplikasi Flutter untuk Modul Cek Rumah
+    Alur Pengintegrasian dengan Aplikasi Flutter untuk Modul Cek Rumah
 </summary>
 
 #### **1. Menyelaraskan Tampilan**
@@ -124,7 +124,8 @@ POST Request: Mengirim data pengguna ke server.
 Fetch Data (GET Request):
 Flutter mengirim HTTP GET dengan cookie autentikasi.
 Server memvalidasi cookie, mengambil data, dan merespons JSON.
-Flutter menampilkan data di UI.
+Flutter menampilkan data di UI. Untuk modul cekrumah ini data-data yang di-fetch adalah data dari model `Appointment` dan `Availability`.
+Kemudian, request yang sering dilakukan adalah untuk melihat data `Availability` yang tersedia dan sebagainya.
 
 Ilustrasi Fetch Data:
 Flutter App  ->  GET Request  ->  Django Server
@@ -133,11 +134,12 @@ Flutter App  <-  JSON Response <-  Django Server
 Post Data (POST Request):
 Flutter mengirim HTTP POST dengan data pengguna.
 Server memvalidasi data, menyimpan ke database, dan merespons status.
-Flutter menampilkan respon ke pengguna.
+Flutter menampilkan respon ke pengguna. Untuk modul cekrumah, POST request dilakukan untuk misalkan, membuat `Appointment` baru yang terikat pada `Seller` dan `Buyer`
+atau ketika ingin meng-update `Availability` jadwal yang dibuat oleh `Seller`.
 
 Ilustrasi Post Data:
-Flutter App  ->  POST Request ->  Django Server
-Flutter App  <-  Response     <-  Django Server
+Flutter App  ->  POST Request (berupa json) ->  Django Server
+Flutter App  <-  Response (berupa json)  <-  Django Server
 
 #### **5. Pentingnya CookieRequest**
 CookieRequest mengelola sesi pengguna secara otomatis:
