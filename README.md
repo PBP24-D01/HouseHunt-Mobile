@@ -90,7 +90,8 @@ Modul ini berfungsi untuk user dapat register dan login. Nantinya akan ada super
 
 ### Role User
 
-Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dilakukan keduanya, sudah dijelaskan di atas.
+Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dilakukan keduanya, sudah dijelaskan di atas. Berikut tampilan secara diagram:
+![HouseHuntFlow](https://github.com/user-attachments/assets/48d2a50e-85ad-476d-ab8a-3376fca46692)
 
 ### Alur pengintegrasian dengan *web service* untuk terhubung dengan aplikasi web yang sudah dibuat saat Proyek Tengah Semester
 Pada proyek Django:
