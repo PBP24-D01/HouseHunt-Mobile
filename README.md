@@ -120,11 +120,11 @@ Pada proyek Flutter:
 ![/alur-integrasi/](/img/AlurIntegrasiDjangodanFlutter.png)
 Alur pengintegrasian request dan response pada Flutter:
 1. Flutter mengirimkan HTTP request ke Django melalui endpoint yang disediakan (`api/resource/`).
-    `GET`: Mengambil data dari server.
-    `POST`: Mengirim data baru ke server.
-    `PUT` atau `PATCH`: Memperbarui data yang sudah ada.
-    `DELETE`: Menghapus data di server.
-    Contoh:
+    <br/>`GET`: Mengambil data dari server.
+    <br/>`POST`: Mengirim data baru ke server.
+    <br/>`PUT` atau `PATCH`: Memperbarui data yang sudah ada.
+    <br/>`DELETE`: Menghapus data di server.
+    <br/>Contoh:
     ```dart
     final request = context.watch<CookieRequest>();
     final response = await request.get('http://localhost:8000/cekrumah/json');  // contoh jika dari localhost
@@ -134,6 +134,27 @@ Alur pengintegrasian request dan response pada Flutter:
 4. View (views.py) akan menangani request dan mengolah data dari request.
 5. Django akan mengakses model (models.py) jika diperlukan untuk membaca, membuat, memperbarui, atau menghapus data.
 6. Django akan mengirimkan HTTP response ke Flutter yang berisi status code dan data dalam format JSON.
+<br/>Contoh:
+```python
+from django.contrib.auth import logout
+...
+@csrf_exempt
+def logout_user(request):
+    username = request.user.username
+
+    try:
+        logout(request)
+        return JsonResponse({
+            "username": username,
+            "status": True,
+            "message": "Logout berhasil!"
+        }, status=200)
+    except:
+        return JsonResponse({
+        "status": False,
+        "message": "Logout gagal."
+        }, status=401)
+```
 7. Flutter menerima respons dari Django dan memprosesnya.
     - Flutter akan menampilkan data jika respons berupa data dengan menampilkannya di UI.
     - Flutter akan menangani error dengan mengembalikan umpan balik berupa pesan error atau dialog.
