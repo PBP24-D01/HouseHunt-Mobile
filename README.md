@@ -116,6 +116,7 @@ Pada proyek Flutter:
 3. Membuat halaman `login.dart` untuk menangani input user dan autentikasi menggunakan `pbp_django_auth`.
 4. Membuat halaman `register.dart` untuk mendaftarkan user baru melalui endpoint Django. Validasi input user dilakukan dengan memberikan umpan balik langsung pada sisi Flutter dan keamanan tambahan pada sisi Django
 
+![/alur-integrasi/](/img/AlurIntegrasiDjangodanFlutter.png)
 Alur pengintegrasian request dan response pada Flutter:
 1. Flutter mengirimkan HTTP request ke Django melalui endpoint yang disediakan (`api/resource/`).
     `GET`: Mengambil data dari server.
@@ -123,11 +124,10 @@ Alur pengintegrasian request dan response pada Flutter:
     `PUT` atau `PATCH`: Memperbarui data yang sudah ada.
     `DELETE`: Menghapus data di server.
     Contoh:
-```dart
-final request = context.watch<CookieRequest>();
-final response = await request.get('http://localhost:8000/cekrumah/json');  // contoh jika dari localhost
-```
-
+    ```dart
+    final request = context.watch<CookieRequest>();
+    final response = await request.get('http://localhost:8000/cekrumah/json');  // contoh jika dari localhost
+    ```
 2. Django menerima permintaan melalui endpoint yang sesuai ( `/api/resource/`).
 3. Django akan memvalidasi autentikasi dan CORS.
 4. View (views.py) akan menangani request dan mengolah data dari request.
