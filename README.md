@@ -92,11 +92,45 @@ Modul ini berfungsi untuk user dapat register dan login. Nantinya akan ada super
 
 Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dilakukan keduanya, sudah dijelaskan di atas.
 
-### Alur pengintegrasian dengan aplikasi web
-1. Menyelaraskan tampilan pada *mobile app* dengan *web app*
-2. Menggunakan library `pbp_django_auth` untuk mendukung fungsi autentikasi berbasis cookie, seperti login, logout, dan postJson
-3. Mengimplementasikan Django REST API untuk mensikronisasi data pada *web app* dan *mobile app* dengan memanfaatkan format JSON
-4. Melakukan integrasi antara front-end dan back-end dengan asynchronous HTTP
+### Alur pengintegrasian dengan *web service* untuk terhubung dengan aplikasi web yang sudah dibuat saat Proyek Tengah Semester
+Pada proyek Django:
+1. Melakukan instalasi Django CORS Headers dengan menjalankan `pip install django-cors-headers` untuk menangani permintaan CORS dan menambahkan `corsheaders` ke `INSTALLED_APPS` dan `MIDDLEWARE`.
+2. Menambahkan konfigurasi CORS pada `settings.py`.
+    ```python
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_CREDENTIALS = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SAMESITE = 'None'
+    ```
+3. Menambahkan aplikasi `authentication` yang menangani dan memproses endpoint login dan register.
+Pada proyek Flutter:
+1. Melakukan instalasi terhadap library yang dibutuhkan.
+    ```bash
+    flutter pub add provider
+    flutter pub add pbp_django_auth
+    flutter pub add http
+    ```
+2. Memodifikasi berkas pada proyek Flutter untuk menyediakan `CookieRequest` ke seluruh aplikasi menggunakan `Provider`.
+3. Membuat halaman `login.dart` untuk menangani input user dan autentikasi menggunakan `pbp_django_auth`.
+4. Membuat halaman `register.dart` untuk mendaftarkan user baru melalui endpoint Django. Validasi input user dilakukan dengan memberikan umpan balik langsung pada sisi Flutter dan keamanan tambahan pada sisi Django
+
+Alur pengintegrasian request dan response pada Flutter:
+1. Flutter mengirimkan HTTP request ke Django melalui endpoint yang disediakan (`api/resource/`).
+    `GET`: Mengambil data dari server.
+    `POST`: Mengirim data baru ke server.
+    `PUT` atau `PATCH`: Memperbarui data yang sudah ada.
+    `DELETE`: Menghapus data di server.
+2. Django menerima permintaan melalui endpoint yang sesuai ( `/api/resource/`).
+3. Django akan memvalidasi autentikasi dan CORS.
+4. View (views.py) akan menangani request dan mengolah data dari request.
+5. Django akan mengakses model (models.py) jika diperlukan untuk membaca, membuat, memperbarui, atau menghapus data.
+6. Django akan mengirimkan HTTP response ke Flutter yang berisi status code dan data dalam format JSON.
+7. Flutter menerima respons dari Django dan memprosesnya.
+    - Flutter akan menampilkan data jika respons berupa data dengan menampilkannya di UI.
+    - Flutter akan menangani error dengan mengembalikan umpan balik berupa pesan error atau dialog.
+    - Flutter akan memperbarui state.
 
 <details>
 <summary>
