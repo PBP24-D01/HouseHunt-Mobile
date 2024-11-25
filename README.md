@@ -98,11 +98,13 @@ Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dil
 3. Mengimplementasikan Django REST API untuk mensikronisasi data pada *web app* dan *mobile app* dengan memanfaatkan format JSON
 4. Melakukan integrasi antara front-end dan back-end dengan asynchronous HTTP
 
-
-### Alur Pengintegrasian dengan Aplikasi Flutter untuk Modul Cek Rumah
+<details>
+<summary>
+    ### Alur Pengintegrasian dengan Aplikasi Flutter untuk Modul Cek Rumah
+</summary>
 
 #### **1. Menyelaraskan Tampilan**
-Tampilan *mobile app* diselaraskan dengan *web app* agar konsisten. Elemen UI seperti warna, font, dan tata letak dibuat seragam untuk pengalaman pengguna yang sama.
+Tampilan *mobile app* diselaraskan dengan *web app* agar konsisten. Elemen UI seperti warna, font, dan tata letak dibuat seragam untuk pengalaman pengguna yang sama. Misalnya seperti, bagaimana penyajian `Appointment` dan `Availability` untuk `seller`.
 
 #### **2. Menggunakan Library `pbp_django_auth`**
 Library `pbp_django_auth` mempermudah autentikasi berbasis cookie. Cookie menyimpan sesi pengguna untuk login, logout, dan pengiriman data JSON (*postJson*), memastikan setiap request terautentikasi.
@@ -152,3 +154,4 @@ ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(content: Text('Gagal menghubungi server.')),
 );
 ```
+</details>
