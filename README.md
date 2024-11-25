@@ -97,3 +97,58 @@ Terdapat dua role, yaitu pembeli dan penjual. Untuk peran apa saja yang bisa dil
 2. Menggunakan library `pbp_django_auth` untuk mendukung fungsi autentikasi berbasis cookie, seperti login, logout, dan postJson
 3. Mengimplementasikan Django REST API untuk mensikronisasi data pada *web app* dan *mobile app* dengan memanfaatkan format JSON
 4. Melakukan integrasi antara front-end dan back-end dengan asynchronous HTTP
+
+
+### Alur Pengintegrasian dengan Aplikasi Flutter untuk Modul Cek Rumah
+
+#### **1. Menyelaraskan Tampilan**
+Tampilan *mobile app* diselaraskan dengan *web app* agar konsisten. Elemen UI seperti warna, font, dan tata letak dibuat seragam untuk pengalaman pengguna yang sama.
+
+#### **2. Menggunakan Library `pbp_django_auth`**
+Library `pbp_django_auth` mempermudah autentikasi berbasis cookie. Cookie menyimpan sesi pengguna untuk login, logout, dan pengiriman data JSON (*postJson*), memastikan setiap request terautentikasi.
+
+##### **Contoh:**
+```dart
+final request = context.watch<CookieRequest>();
+final response = await request.get('http://localhost:8000/cekrumah/json');  // contoh jika dari localhost
+```
+
+#### **3. Menggunakan Django REST API**
+Django REST API bertindak sebagai perantara untuk sinkronisasi data antara web app dan mobile app dalam format JSON.
+GET Request: Mengambil data dari server.
+POST Request: Mengirim data pengguna ke server.
+
+#### **4. Proses Request dari Flutter**
+Fetch Data (GET Request):
+Flutter mengirim HTTP GET dengan cookie autentikasi.
+Server memvalidasi cookie, mengambil data, dan merespons JSON.
+Flutter menampilkan data di UI.
+
+Ilustrasi Fetch Data:
+Flutter App  ->  GET Request  ->  Django Server
+Flutter App  <-  JSON Response <-  Django Server
+
+Post Data (POST Request):
+Flutter mengirim HTTP POST dengan data pengguna.
+Server memvalidasi data, menyimpan ke database, dan merespons status.
+Flutter menampilkan respon ke pengguna.
+
+Ilustrasi Post Data:
+Flutter App  ->  POST Request ->  Django Server
+Flutter App  <-  Response     <-  Django Server
+
+#### **5. Pentingnya CookieRequest**
+CookieRequest mengelola sesi pengguna secara otomatis:
+Menyisipkan cookie ke setiap permintaan.
+Memastikan pengguna tetap terautentikasi tanpa login ulang.
+Digunakan di semua komponen aplikasi untuk menjaga konsistensi.
+
+#### **6. Feedback ke Pengguna**
+Berhasil: Data baru ditampilkan di UI.
+Gagal: Pesan error ditampilkan, seperti masalah jaringan atau autentikasi.
+Contoh:
+```dart
+ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Gagal menghubungi server.')),
+);
+```
