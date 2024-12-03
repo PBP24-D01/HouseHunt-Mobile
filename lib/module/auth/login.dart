@@ -1,29 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-// reg sama home
-
-void main() {
-  runApp(const LoginApp());
-}
-
-class LoginApp extends StatelessWidget {
-  const LoginApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.deepPurple,
-        ).copyWith(secondary: Colors.deepPurple[400]),
-      ),
-      home: const LoginPage(),
-    );
-  }
-}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,9 +18,6 @@ class _LoginPageState extends State<LoginPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -93,14 +67,21 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    ),
                     onPressed: () async {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
-                      final response = await request
-                          .login("http://tristan-agra-kmstore.pbp.cs.ui.ac.id/auth/login/", {
-                        'username': username,
-                        'password': password,
-                      });
+                      final response = await request.login(
+                          "http://tristan-agra-househuntx.pbp.cs.ui.ac.id/auth/login/flutter/",
+                          {
+                            'username': username,
+                            'password': password,
+                          });
 
                       if (request.loggedIn) {
                         String message = response['message'];
@@ -109,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                           //Navigator.pushReplacement(
                           //  context,
                           //  MaterialPageRoute(
-                          //      builder: (context) => MyHomePage()),
+                          //      builder: (context) => const MyHomePage()),
                           //);
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
@@ -139,30 +120,51 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 50),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    ),
                     child: const Text('Login'),
                   ),
                   const SizedBox(height: 36.0),
-                  GestureDetector(
-                    onTap: () {
-                      //Navigator.push(
-                      //  context,
-                      //  MaterialPageRoute(
-                      //     builder: (context) => const RegisterPage()),
-                      //);
-                    },
-                    child: Text(
-                      'Don\'t have an account? Register',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 16.0,
-                      ),
+                  const Divider(
+                    color: Colors.grey, // Line color
+                    thickness: 1, // Line thickness
+                    indent: 16, // Left padding
+                    endIndent: 16, // Right padding
+                  ),
+                  Center(
+                    child: Image.asset('assets/images/HouseHunt.png'),
+                  ),
+                  const Text(
+                    'Belum punya akun? Daftar sekarang',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(height: 18.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      side: const BorderSide(color: Colors.grey, width: 1.0),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
+                    child: const Text('Daftar sebagai Penjual'),
+                  ),
+                  const SizedBox(height: 18.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/home');
+                    },
+                    child: const Text('Daftar sebagai Pembeli'),
                   ),
                 ],
               ),
