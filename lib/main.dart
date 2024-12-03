@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
         title: 'HouseHunt',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.blue,
-          ).copyWith(secondary: Colors.lightBlueAccent),
+            primarySwatch: Colors.grey,
+          ).copyWith(secondary: Colors.grey[800]),
           useMaterial3: true,
         ),
         home: const LoginPage(),
