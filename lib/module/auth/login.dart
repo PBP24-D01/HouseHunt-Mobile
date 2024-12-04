@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:househunt_mobile/module/auth/register_buyer.dart';
+import 'package:househunt_mobile/module/auth/register_seller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -77,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
                       final response = await request.login(
-                          "http://tristan-agra-househuntx.pbp.cs.ui.ac.id/auth/login/flutter/",
+                          "https://tristan-agra-househunt.pbp.cs.ui.ac.id/login/flutter/",
                           {
                             'username': username,
                             'password': password,
@@ -149,7 +151,11 @@ class _LoginPageState extends State<LoginPage> {
                       side: const BorderSide(color: Colors.grey, width: 1.0),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/register');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterSellerPage()),
+                      );
                     },
                     child: const Text('Daftar sebagai Penjual'),
                   ),
@@ -162,7 +168,11 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/home');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterBuyerPage()),
+                      );
                     },
                     child: const Text('Daftar sebagai Pembeli'),
                   ),
