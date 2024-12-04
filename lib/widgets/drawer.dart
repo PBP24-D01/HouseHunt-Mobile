@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:househunt_mobile/module/rumah/main.dart';
+import 'package:househunt_mobile/module/auth/register_buyer.dart';
+import 'package:househunt_mobile/module/auth/register_seller.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -39,6 +42,16 @@ class LeftDrawer extends StatelessWidget {
           if (isAuthenticated) ...[
             if (isBuyer) ...[
               ListTile(
+                leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
+                title: const Text('Home'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),
                 title: const Text('Wishlist'),
                 onTap: () {
@@ -68,6 +81,16 @@ class LeftDrawer extends StatelessWidget {
               ),
             ],
             if (isSeller) ...[
+              ListTile(
+                leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
+                title: const Text('Home'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.ads_click, color: Color(0xFF4A628A)),
                 title: const Text('Iklan'),
@@ -109,7 +132,7 @@ class LeftDrawer extends StatelessWidget {
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
               onTap: () async {
                 await request.logout(
-                    "http://tristan-agra-househuntx.pbp.cs.ui.ac.id/auth/logout/flutter/");
+                    "https://tristan-agra-househunt.pbp.cs.ui.ac.id/logout/flutter/");
                 if (!request.loggedIn && context.mounted) {
                   Navigator.pushReplacement(
                     context,
@@ -125,6 +148,16 @@ class LeftDrawer extends StatelessWidget {
           // Menu untuk guest (belum login)
           if (!isAuthenticated) ...[
             ListTile(
+              leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.login, color: Color(0xFF4A628A)),
               title: const Text('Login'),
               onTap: () {
@@ -136,9 +169,24 @@ class LeftDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.person_add, color: Color(0xFF4A628A)),
-              title: const Text('Daftar'),
+              title: const Text('Daftar Sebagai Pembeli'),
               onTap: () {
-                Navigator.pushNamed(context, '/register');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RegisterBuyerPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_add, color: Color(0xFF4A628A)),
+              title: const Text('Daftar Sebagai Penjual'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RegisterSellerPage()),
+                );
               },
             ),
           ],
