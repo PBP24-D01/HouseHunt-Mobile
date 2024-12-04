@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'HouseHunt',
         theme: ThemeData(
+          scaffoldBackgroundColor: Colors.grey[200],
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.grey,
           ).copyWith(secondary: Colors.grey[800]),
