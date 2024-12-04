@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 
 class WishlistPage extends StatelessWidget {
   final List<Map<String, dynamic>> wishlistItems = [
@@ -15,9 +16,10 @@ class WishlistPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wishlist'),
+        title: const Text('Wishlist'),
         backgroundColor: Colors.blue,
       ),
+      drawer: const LeftDrawer(),
       body: wishlistItems.isEmpty
           ? Center(
               child: Padding(
@@ -30,7 +32,7 @@ class WishlistPage extends StatelessWidget {
                       size: 80,
                       color: Colors.grey[400],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       'Kamu belum punya wishlist rumah!',
                       style: TextStyle(
@@ -39,22 +41,22 @@ class WishlistPage extends StatelessWidget {
                         color: Colors.grey[600],
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. Rencanakan rumah terbaikmu bersama HouseHunt.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         // Add navigation or action logic here
                       },
-                      child: Text('Cari Rumah'),
+                      child: const Text('Cari Rumah'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.indigo,
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        textStyle: TextStyle(fontSize: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        textStyle: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ],
@@ -67,7 +69,7 @@ class WishlistPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = wishlistItems[index];
                 return Card(
-                  margin: EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -75,7 +77,7 @@ class WishlistPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+                        borderRadius: const BorderRadius.horizontal(left: Radius.circular(10)),
                         child: Image.asset(
                           item['image'],
                           width: 120,
@@ -91,12 +93,12 @@ class WishlistPage extends StatelessWidget {
                             children: [
                               Text(
                                 item['title'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 item['location'],
                                 style: TextStyle(
@@ -104,10 +106,10 @@ class WishlistPage extends StatelessWidget {
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 item['price'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.indigo,
                                   fontWeight: FontWeight.bold,
