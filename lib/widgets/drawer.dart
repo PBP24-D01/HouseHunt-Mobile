@@ -22,66 +22,91 @@ class LeftDrawer extends StatelessWidget {
           // Header Drawer
           DrawerHeader(
             decoration: const BoxDecoration(
-              color: Colors.blue,
+              color: Color(0xFF4A628A),
             ),
             child: Text(
               isAuthenticated
-                  ? 'Welcome, ${request.jsonData['username']}!'
+                  ? 'Hello, ${request.jsonData['username']}!'
                   : 'Hello, Guest!',
-              style: const TextStyle(color: Colors.white, fontSize: 20),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           // Menu untuk user yang login
           if (isAuthenticated) ...[
             if (isBuyer) ...[
               ListTile(
-                leading: const Icon(Icons.favorite),
+                leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),
                 title: const Text('Wishlist'),
                 onTap: () {
                   Navigator.pushNamed(context, '/wishlist');
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.message),
+                leading: const Icon(Icons.message, color: Color(0xFF4A628A)),
                 title: const Text('Diskusi'),
                 onTap: () {
                   Navigator.pushNamed(context, '/discussion');
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.house),
+                leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
                   Navigator.pushNamed(context, '/check_houses');
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.gavel, color: Color(0xFF4A628A)),
+                title: const Text('Lelang'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/auction');
+                },
+              ),
             ],
             if (isSeller) ...[
               ListTile(
-                leading: const Icon(Icons.ads_click),
+                leading: const Icon(Icons.ads_click, color: Color(0xFF4A628A)),
                 title: const Text('Iklan'),
                 onTap: () {
                   Navigator.pushNamed(context, '/advertisements');
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.message),
+                leading: const Icon(Icons.message, color: Color(0xFF4A628A)),
                 title: const Text('Diskusi'),
                 onTap: () {
                   Navigator.pushNamed(context, '/discussion');
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.house),
+                leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
                   Navigator.pushNamed(context, '/check_houses');
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.gavel, color: Color(0xFF4A628A)),
+                title: const Text('Lelang'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/auction');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.add),
+                title: const Text('Sell House'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/sell_house');
+                },
+              ),
             ],
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Logout', style: TextStyle(color: Colors.red)),
               onTap: () async {
                 await request.logout(
                     "http://tristan-agra-househuntx.pbp.cs.ui.ac.id/auth/logout/flutter/");
@@ -100,7 +125,7 @@ class LeftDrawer extends StatelessWidget {
           // Menu untuk guest (belum login)
           if (!isAuthenticated) ...[
             ListTile(
-              leading: const Icon(Icons.login),
+              leading: const Icon(Icons.login, color: Color(0xFF4A628A)),
               title: const Text('Login'),
               onTap: () {
                 Navigator.push(
@@ -110,7 +135,7 @@ class LeftDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_add),
+              leading: const Icon(Icons.person_add, color: Color(0xFF4A628A)),
               title: const Text('Daftar'),
               onTap: () {
                 Navigator.pushNamed(context, '/register');
