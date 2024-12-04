@@ -195,7 +195,7 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
                       final response = await request.postJson(
-                          "https://tristan-agra-househunt.pbp.cs.ui.ac.id/register/buyer/flutter/",
+                          "http://127.0.0.1:8000/register/buyer/flutter/",
                           jsonEncode({
                             "username": username,
                             "email": email,
