@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/auth/register_buyer.dart';
 import 'package:househunt_mobile/module/auth/register_seller.dart';
+import 'package:househunt_mobile/module/rumah/main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -78,22 +79,21 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () async {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
-                      final response = await request.login(
-                          "https://tristan-agra-househunt.pbp.cs.ui.ac.id/login/flutter/",
-                          {
-                            'username': username,
-                            'password': password,
-                          });
+                      final response = await request
+                          .login("http://127.0.0.1:8000/login/flutter/", {
+                        'username': username,
+                        'password': password,
+                      });
 
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
                         if (context.mounted) {
-                          //Navigator.pushReplacement(
-                          //  context,
-                          //  MaterialPageRoute(
-                          //      builder: (context) => const MyHomePage()),
-                          //);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                          );
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
