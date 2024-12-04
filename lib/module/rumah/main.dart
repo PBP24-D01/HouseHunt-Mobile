@@ -12,10 +12,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List houses = [];
-  String selectedLocation = '';
-  String selectedPriceRange = '';
-  String selectedBedrooms = '';
-  String selectedBathrooms = '';
+  String? selectedLocation;
+  String? selectedPriceRange;
+  String? selectedBedrooms;
+  String? selectedBathrooms;
 
   @override
   void initState() {
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      selectedLocation = newValue!;
+                      selectedLocation = newValue;
                     });
                   },
                   decoration: const InputDecoration(
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      selectedPriceRange = newValue!;
+                      selectedPriceRange = newValue;
                     });
                   },
                   decoration: const InputDecoration(
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      selectedBedrooms = newValue!;
+                      selectedBedrooms = newValue;
                     });
                   },
                   decoration: const InputDecoration(
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      selectedBathrooms = newValue!;
+                      selectedBathrooms = newValue;
                     });
                   },
                   decoration: const InputDecoration(
