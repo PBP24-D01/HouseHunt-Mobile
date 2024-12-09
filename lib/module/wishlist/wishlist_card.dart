@@ -60,7 +60,7 @@ class WishlistCard extends StatelessWidget {
 
             // Price
             Text(
-              "\$${wishlist.harga}",
+              "\Rp${wishlist.harga}",
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
