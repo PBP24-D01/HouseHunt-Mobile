@@ -5,6 +5,7 @@ import 'package:househunt_mobile/module/diskusi/models/show_seller.dart'; // Imp
 import 'package:househunt_mobile/widgets/drawer.dart'; // Import the LeftDrawer
 
 class DiscussionPage extends StatefulWidget {
+  const DiscussionPage({Key? key}) : super(key: key);
   @override
   _DiscussionPageState createState() => _DiscussionPageState();
 }

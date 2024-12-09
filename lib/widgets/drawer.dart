@@ -8,6 +8,7 @@ import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:househunt_mobile/module/auth/register_buyer.dart';
 import 'package:househunt_mobile/module/auth/register_seller.dart';
 import 'package:househunt_mobile/module/lelang/main.dart';
+import 'package:househunt_mobile/module/diskusi/main.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -85,7 +86,10 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.message, color: Color(0xFF4A628A)),
                 title: const Text('Diskusi'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/discussion');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DiscussionPage()),
+                  );
                 },
               ),
               ListTile(
@@ -127,7 +131,10 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.message, color: Color(0xFF4A628A)),
                 title: const Text('Diskusi'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/discussion');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DiscussionPage()),
+                  );
                 },
               ),
               ListTile(
