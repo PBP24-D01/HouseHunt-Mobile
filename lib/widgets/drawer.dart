@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:househunt_mobile/module/auth/register_buyer.dart';
 import 'package:househunt_mobile/module/auth/register_seller.dart';
+import 'package:househunt_mobile/module/lelang/main.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -98,7 +99,9 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.gavel, color: Color(0xFF4A628A)),
                 title: const Text('Lelang'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/auction');
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => const AuctionPage())
+                  );
                 },
               ),
             ],
@@ -138,7 +141,9 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.gavel, color: Color(0xFF4A628A)),
                 title: const Text('Lelang'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/auction');
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => const AuctionPage())
+                  );
                 },
               ),
               ListTile(
