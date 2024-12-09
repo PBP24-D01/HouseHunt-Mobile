@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
 import 'package:househunt_mobile/module/cekrumah/cekrumah_buyer.dart';
 import 'package:househunt_mobile/module/cekrumah/cekrumah_seller.dart';
+import 'package:househunt_mobile/module/diskusi/main.dart';
 import 'package:househunt_mobile/module/iklan/main.dart';
+import 'package:househunt_mobile/module/wishlist/main.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
@@ -80,17 +82,23 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),  
+                leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),
                 title: const Text('Wishlist'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/wishlist');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WishlistPage()));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.message, color: Color(0xFF4A628A)),
                 title: const Text('Diskusi'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/discussion');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DiscussionPage()));
                 },
               ),
               ListTile(
@@ -139,7 +147,10 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.message, color: Color(0xFF4A628A)),
                 title: const Text('Diskusi'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/discussion');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DiscussionPage()));
                 },
               ),
               ListTile(

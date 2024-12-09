@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert'; // For JSON decoding
 import 'package:http/http.dart' as http;
 import 'package:househunt_mobile/module/diskusi/models/show_seller.dart'; // Import the show_seller.dart file
 import 'package:househunt_mobile/widgets/drawer.dart'; // Import the LeftDrawer
