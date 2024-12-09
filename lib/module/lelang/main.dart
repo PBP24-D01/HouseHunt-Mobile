@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/lelang/models/auction.dart';
+import 'package:househunt_mobile/module/lelang/screens/detail.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -182,14 +183,13 @@ class _AuctionPageState extends State<AuctionPage> {
                                       const SizedBox(height: 8.0),
                                       ElevatedButton(
                                         onPressed: () {
-                                          //Navigator.push(
-                                          //  context,
-                                          //  MaterialPageRoute(
-                                          //    builder: (context) =>
-                                          //        DetailProductPage(
-                                          //            keyboard: keyboard),
-                                          //  ),
-                                          //);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuctionDetail(
+                                                        auction: auction),
+                                              ));
                                         },
                                         style: ElevatedButton.styleFrom(
                                           foregroundColor: Colors.white,
