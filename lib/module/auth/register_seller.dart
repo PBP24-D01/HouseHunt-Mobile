@@ -12,7 +12,6 @@ class RegisterSellerPage extends StatefulWidget {
 }
 
 class _RegisterSellerPageState extends State<RegisterSellerPage> {
-  final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneNumberController = TextEditingController();
@@ -200,9 +199,6 @@ class _RegisterSellerPageState extends State<RegisterSellerPage> {
                   const SizedBox(height: 24.0),
                   ElevatedButton(
                     onPressed: () async {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
                       String username = _usernameController.text;
                       String email = _emailController.text;
                       String phoneNumber = _phoneNumberController.text;
