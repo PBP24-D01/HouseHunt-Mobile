@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
 import 'package:househunt_mobile/module/cekrumah/cekrumah_buyer.dart';
 import 'package:househunt_mobile/module/cekrumah/cekrumah_seller.dart';
+import 'package:househunt_mobile/module/iklan/main.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
@@ -52,7 +53,11 @@ class LeftDrawer extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    isAuthenticated ? isBuyer ? 'Akun Pembeli' : 'Akun Penjual' : '',
+                    isAuthenticated
+                        ? isBuyer
+                            ? 'Akun Pembeli'
+                            : 'Akun Penjual'
+                        : '',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -75,7 +80,7 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),
+                leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),  
                 title: const Text('Wishlist'),
                 onTap: () {
                   Navigator.pushNamed(context, '/wishlist');
@@ -92,16 +97,20 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CekRumahBuyer()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CekRumahBuyer()));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.gavel, color: Color(0xFF4A628A)),
                 title: const Text('Lelang'),
                 onTap: () {
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => const AuctionPage())
-                  );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AuctionPage()));
                 },
               ),
             ],
@@ -120,7 +129,10 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.ads_click, color: Color(0xFF4A628A)),
                 title: const Text('Iklan'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/advertisements');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const IklanPage()));
                 },
               ),
               ListTile(
@@ -134,16 +146,20 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CekRumahSeller()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CekRumahSeller()));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.gavel, color: Color(0xFF4A628A)),
                 title: const Text('Lelang'),
                 onTap: () {
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => const AuctionPage())
-                  );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AuctionPage()));
                 },
               ),
               ListTile(
