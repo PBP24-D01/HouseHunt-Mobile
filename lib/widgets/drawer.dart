@@ -24,20 +24,40 @@ class LeftDrawer extends StatelessWidget {
         children: [
           // Header Drawer
           DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xFF4A628A),
-            ),
-            child: Text(
-              isAuthenticated
-                  ? 'Hello, ${request.jsonData['username']}!'
-                  : 'Hello, Guest!',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4A628A),
               ),
-            ),
-          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isAuthenticated
+                        ? 'Hello, ${request.jsonData['username']}!'
+                        : 'Hello, Guest!',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    isAuthenticated ? '${request.jsonData['email']}' : '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    isAuthenticated ? isBuyer ? 'Akun Pembeli' : 'Akun Penjual' : '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              )),
           // Menu untuk user yang login
           if (isAuthenticated) ...[
             if (isBuyer) ...[
