@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
 
 class WishlistCard extends StatelessWidget {
-  final String title;
-  final String location;
-  final String price;
-  final String imageUrl;
-  final String priority;
+  final Wishlist wishlist;
   final VoidCallback onDelete;
 
   const WishlistCard({
     Key? key,
-    required this.title,
-    required this.location,
-    required this.price,
-    required this.imageUrl,
-    required this.priority,
+    required this.wishlist,
     required this.onDelete,
   }) : super(key: key);
 
@@ -34,11 +27,11 @@ class WishlistCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                imageUrl,
+                wishlist.gambar,
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Icon(
+                errorBuilder: (context, error, stackTrace) => const Icon(
                   Icons.image_not_supported,
                   size: 150,
                   color: Colors.grey,
@@ -49,8 +42,8 @@ class WishlistCard extends StatelessWidget {
 
             // Title
             Text(
-              title,
-              style: TextStyle(
+              wishlist.judul,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -58,7 +51,7 @@ class WishlistCard extends StatelessWidget {
 
             // Location
             Text(
-              location,
+              wishlist.lokasi,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -67,8 +60,8 @@ class WishlistCard extends StatelessWidget {
 
             // Price
             Text(
-              price,
-              style: TextStyle(
+              "\$${wishlist.harga}",
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: Colors.teal,
@@ -86,18 +79,18 @@ class WishlistCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.flag,
-                      color: _getPriorityColor(priority),
+                      color: _getPriorityColor(wishlist.prioritas),
                       size: 18,
                     ),
                     const SizedBox(width: 5),
-                    Text(priority),
+                    Text(wishlist.prioritas),
                   ],
                 ),
 
                 // Delete Button
                 IconButton(
                   onPressed: onDelete,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
                     color: Colors.red,
                   ),
