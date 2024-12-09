@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
+import 'package:househunt_mobile/module/cekrumah/cekrumah_buyer.dart';
+import 'package:househunt_mobile/module/cekrumah/cekrumah_seller.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
@@ -90,7 +92,7 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/check_houses');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CekRumahBuyer()));
                 },
               ),
               ListTile(
@@ -132,7 +134,7 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/check_houses');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CekRumahSeller()));
                 },
               ),
               ListTile(
