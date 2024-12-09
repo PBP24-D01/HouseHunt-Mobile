@@ -229,7 +229,7 @@ class HouseCard extends StatelessWidget {
             house['gambar'] ?? 'https://via.placeholder.com/150',
             width: double.infinity,
             height: 200,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
