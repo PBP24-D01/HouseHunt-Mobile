@@ -1,51 +1,135 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/module/iklan/models/iklan.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
-class WishlistPage extends StatelessWidget {
+class IklanPage extends StatefulWidget {
+  const IklanPage({super.key});
+
+  @override
+  State<IklanPage> createState() => _IklanPageState();
+}
+
+class _IklanPageState extends State<IklanPage> {
+  Future<List<Iklan>> fetchIklan(CookieRequest request) async {
+    final response = await request.get('http://127.0.0.1:8000/iklan/get-all/');
+    var data = response;
+    List<Iklan> listIklan = [];
+    for (var d in data) {
+      if (d != null) {
+        listIklan.add(Iklan.fromJson(d));
+      }
+    }
+    return listIklan;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Iklan'),
-        backgroundColor: Colors.blue,
+        title: const Text('Product List'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      drawer: const LeftDrawer(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          // Use this to make the content scrollable
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.favorite_border,
-                size: 80,
-                color: Colors.grey[400],
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Kamu belum punya Iklan rumah!',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Ayo bikin iklan, supaya rumah kamu bisa dilihat pelanggan dengan mudah!',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Add navigation or action logic here
+              FutureBuilder<List<Iklan>>(
+                future: fetchIklan(request),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text('No Auction available'),
+                    );
+                  } else {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Auction',
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12.0),
+                        SizedBox(
+                          height: 270,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              final iklan = snapshot.data![index];
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
+                                  elevation: 8,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          iklan.houseTitle,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            //Navigator.push(
+                                            //  context,
+                                            //  MaterialPageRoute(
+                                            //    builder: (context) =>
+                                            //        DetailProductPage(
+                                            //            keyboard: keyboard),
+                                            //  ),
+                                            //);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.amber, // Button color
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
+                                          ),
+                                          child: const Text(
+                                            'Detail',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 },
-                child: Text('Cari Rumah'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  textStyle: TextStyle(fontSize: 16),
-                ),
-              ),
+              ), // Add spacing between sections
             ],
           ),
         ),
