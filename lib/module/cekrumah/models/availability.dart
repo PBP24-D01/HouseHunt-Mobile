@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'dart:convert';
 
 Availability availabilityFromJson(String str) => Availability.fromJson(json.decode(str));
 

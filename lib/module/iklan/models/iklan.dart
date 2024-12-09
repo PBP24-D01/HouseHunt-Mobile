@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-
 Iklan iklanFromJson(String str) => Iklan.fromJson(json.decode(str));
 
 String iklanToJson(Iklan data) => json.encode(data.toJson());
