@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/lelang/models/auction.dart';
+import 'package:househunt_mobile/module/lelang/models/available_auction.dart';
 import 'package:househunt_mobile/module/lelang/screens/detail.dart';
+import 'package:househunt_mobile/module/lelang/screens/lelang_form.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,21 @@ class AuctionPage extends StatefulWidget {
 }
 
 class _AuctionPageState extends State<AuctionPage> {
+  Future<List<AvailableAuction>> fetchHouses(CookieRequest request) async {
+    final response =
+        await request.get('http://127.0.0.1:8000/auction/available-houses/');
+
+    var data = response;
+
+    List<AvailableAuction> houses = [];
+    for (var house in data) {
+      if (house != null) {
+        houses.add(AvailableAuction.fromJson(house));
+      }
+    }
+    return houses;
+  }
+
   Future<List<Auction>> fetchAuction(CookieRequest request) async {
     final response =
         await request.get('http://127.0.0.1:8000/auction/get-all/');
@@ -31,9 +48,19 @@ class _AuctionPageState extends State<AuctionPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    bool isBuyer = request.jsonData['is_buyer'] ?? false;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lelang'),
+        title: Text(
+          'Lelang',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+        iconTheme: const IconThemeData(color: Colors.white),
+        foregroundColor: Colors.white,
       ),
       drawer: const LeftDrawer(),
       body: Padding(
@@ -68,6 +95,36 @@ class _AuctionPageState extends State<AuctionPage> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 12.0),
+                        if (!isBuyer)
+                          FutureBuilder<List<AvailableAuction>>(
+                              future: fetchHouses(request),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<AvailableAuction>>
+                                      snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return const Text('No houses available');
+                                } else {
+                                  return ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuctionFormPage(
+                                                        house: snapshot.data ??
+                                                            [])));
+                                      },
+                                      child: Text('Tambah Lelang'));
+                                }
+                              }),
                         const SizedBox(height: 12.0),
                         ListView.builder(
                           shrinkWrap: true,
@@ -188,7 +245,9 @@ class _AuctionPageState extends State<AuctionPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     AuctionDetail(
-                                                        auction: auction),
+                                                  auctionId: auction.id,
+                                                  title: auction.title,
+                                                ),
                                               ));
                                         },
                                         style: ElevatedButton.styleFrom(
