@@ -178,7 +178,7 @@ class _AuctionPageState extends State<AuctionPage> {
                                         ),
                                       ),
                                       Text(
-                                        'IDR ${auction.housePrice.toString()}',
+                                        'Rp ${auction.housePrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
                                         style: const TextStyle(
                                           fontSize: 24.0,
                                           fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class _AuctionPageState extends State<AuctionPage> {
                                         ),
                                       ),
                                       Text(
-                                        'IDR ${auction.currentPrice.toString()}',
+                                        'Rp ${auction.currentPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
                                         style: const TextStyle(
                                           fontSize: 24.0,
                                           fontWeight: FontWeight.bold,

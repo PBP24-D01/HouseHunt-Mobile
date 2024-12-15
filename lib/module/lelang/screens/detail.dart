@@ -50,217 +50,234 @@ class _AuctionDetailState extends State<AuctionDetail> {
           foregroundColor: Colors.white,
         ),
         drawer: const LeftDrawer(),
-        body: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                FutureBuilder<Auction>(
-                  future: fetchDetailAuction(request),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    } else if (!snapshot.hasData || snapshot.data == null) {
-                      return const Center(
-                        child: Text('No data'),
-                      );
-                    } else {
-                      final auction = snapshot.data;
-                      return Column(
-                        children: [
-                          Card(
-                            elevation: 8,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    auction!.title,
-                                    style: const TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.bold,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              FutureBuilder<Auction>(
+                future: fetchDetailAuction(request),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data == null) {
+                    return const Center(
+                      child: Text('No data'),
+                    );
+                  } else {
+                    final auction = snapshot.data;
+                    return Column(
+                      children: [
+                        Card(
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Center(
+                                    child: Text(
+                                  auction!.title,
+                                  style: const TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                                const SizedBox(height: 12.0),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Start Date:\n${auction.startDate}',
+                                      style: const TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 30.0),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Start Date:\n${auction.startDate}',
-                                        style: const TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.grey,
-                                        ),
+                                    Text(
+                                      'End Date:\n${auction.endDate}',
+                                      style: const TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey,
                                       ),
-                                      Text(
-                                        'End Date:\n${auction.endDate}',
-                                        style: const TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          Card(
-                            elevation: 8,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "House Details",
-                                    style: const TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.bold,
+                        ),
+                        Card(
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "House Details",
+                                  style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                Text(
+                                  auction.houseTitle,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 16.0),
+                                Image.network(
+                                  'http://127.0.0.1:8000/${auction.houseImage}',
+                                  width: double.infinity,
+                                  height: 150,
+                                  fit: BoxFit.contain,
+                                ),
+                                const SizedBox(height: 16.0),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Location: ',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Text(
-                                    auction.houseTitle,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                    Text(
+                                      auction.houseAddress,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Image.network(
-                                    'http://127.0.0.1:8000/${auction.houseImage}',
-                                    width: double.infinity,
-                                    height: 200,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Text(
-                                    'Location: ${auction.houseAddress}',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Harga Asli: ',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Text(
-                                    'Harga Asli: IDR ${auction.housePrice}',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                    Text(
+                                      'Rp ${auction.housePrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Text(
-                                    'Penjual: ${auction.seller}',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Seller: ',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                ],
-                              ),
+                                    Text(
+                                      auction.seller,
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                              ],
                             ),
                           ),
-                          Card(
-                            elevation: 8,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "Auction Information",
-                                    style: const TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.bold,
+                        ),
+                        Card(
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Auction Information",
+                                  style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 16.0),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Highest Bidder: ',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        'Real Price:',
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.grey,
-                                        ),
+                                    Text(
+                                      auction.highestBuyer ??
+                                          'No one has bid yet',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.redAccent,
                                       ),
-                                      const SizedBox(height: 8.0),
-                                      Text(
-                                        'IDR ${auction.housePrice.toString()}',
-                                        style: const TextStyle(
-                                          fontSize: 24.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green,
-                                        ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Current Bid: IDR: ',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey,
                                       ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        'Highest Bidder:',
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.grey,
-                                        ),
+                                    ),
+                                    Text(
+                                      'Rp ${auction.currentPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.green,
                                       ),
-                                      const SizedBox(height: 8.0),
-                                      Text(
-                                        auction.highestBuyer ??
-                                            'Belum ada bidder',
-                                        style: const TextStyle(
-                                          fontSize: 24.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.redAccent,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Current Bid: IDR: ',
-                                        style: const TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8.0),
-                                      Text(
-                                        auction.currentPrice.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 24.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                )
+                              ],
                             ),
                           ),
-                        ],
-                      );
-                    }
-                  },
-                )
-              ],
-            ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              )
+            ],
           ),
         ));
   }
