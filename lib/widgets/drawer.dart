@@ -11,6 +11,7 @@ import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:househunt_mobile/module/auth/register_buyer.dart';
 import 'package:househunt_mobile/module/auth/register_seller.dart';
 import 'package:househunt_mobile/module/lelang/main.dart';
+import 'package:househunt_mobile/module/rumah/sell_house.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -85,10 +86,8 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.favorite, color: Color(0xFF4A628A)),
                 title: const Text('Wishlist'),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WishlistPage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => WishlistPage()));
                 },
               ),
               ListTile(
@@ -177,7 +176,12 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.add),
                 title: const Text('Sell House'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/sell_house');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateHousePage(),
+                    ),
+                  );
                 },
               ),
             ],
