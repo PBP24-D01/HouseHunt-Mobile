@@ -36,7 +36,7 @@ class Wishlist {
     int kamarTidur;
     int kamarMandi;
     String prioritas;
-    String catatan;
+    String? catatan;
 
     Wishlist({
         required this.id,
@@ -50,7 +50,7 @@ class Wishlist {
         required this.kamarTidur,
         required this.kamarMandi,
         required this.prioritas,
-        required this.catatan,
+        this.catatan,
     });
 
     factory Wishlist.fromJson(Map<String, dynamic> json) => Wishlist(
