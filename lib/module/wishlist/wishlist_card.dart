@@ -126,11 +126,7 @@ class WishlistCard extends StatelessWidget {
                       size: 18,
                     ),
                     const SizedBox(width: 5),
-                    Text(
-                      wishlist.prioritas.isNotEmpty
-                          ? wishlist.prioritas
-                          : 'Unknown',
-                    ),
+                    Text(wishlist.prioritas.capitalize()),
                   ],
                 ),
                 Expanded(
@@ -221,5 +217,12 @@ class WishlistCard extends StatelessWidget {
       default:
         return Colors.grey;
     }
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1)}';
   }
 }
