@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
+import 'package:househunt_mobile/module/wishlist/wishlist_edit.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -36,25 +37,12 @@ class _WishlistPageState extends State<WishlistPage> {
     return wishlist;
   }
 
-  /// This method is called by the card's onDelete callback.
-  /// It sends the delete request to your Django backend,
-  /// shows a SnackBar with the response, and calls setState
-  /// to refresh the FutureBuilder.
   void _handleDeleteWishlist(Wishlist item) async {
     final request = context.read<CookieRequest>();
-
-  //   if (!request.loggedIn) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     const SnackBar(content: Text('You must log in first!')),
-  //   );
-  //   return;
-  // }
 
     final url = 'http://127.0.0.1:8000/wishlist/delete-flutter/${item.rumahId}/';
 
     try {
-      // Because we're using pbp_django_auth, the session cookie and CSRF
-      // token are automatically included if the user is logged in.
       final response = await request.post(url, {'action': 'delete'});
 
       if (response['status'] == 'success') {
@@ -69,7 +57,6 @@ class _WishlistPageState extends State<WishlistPage> {
         );
       }
     } catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -77,9 +64,20 @@ class _WishlistPageState extends State<WishlistPage> {
   }
 
   /// You can implement edit functionality here
-  void _handleEditWishlist(Wishlist wishlist) {
-    // For example, navigate to an "Edit Wishlist" screen or show a dialog
-    print('Editing wishlist: ${wishlist.id}');
+  Future<void> _handleEditWishlist(Wishlist wishlist, CookieRequest request) async {
+    final updated = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditWishlistPage(wishlist: wishlist),
+      ),
+    );
+
+    if (updated == true) {
+      setState(() {
+        // Reload or refresh the wishlist data
+        fetchWishlist(request);
+      });
+    }
   }
 
   @override
@@ -160,7 +158,7 @@ class _WishlistPageState extends State<WishlistPage> {
                     wishlist: item,  // Pass the item data
                     request: request,  // Pass the request
                     onDelete: () => _handleDeleteWishlist(item),
-                    onEdit: () => _handleEditWishlist(item),
+                    onEdit: () => _handleEditWishlist(item, request),
                   );
                 },
               );
