@@ -32,6 +32,7 @@ class Wishlist {
     int harga;
     String lokasi;
     String gambar;
+    String penjual;
     int kamarTidur;
     int kamarMandi;
     String prioritas;
@@ -45,6 +46,7 @@ class Wishlist {
         required this.harga,
         required this.lokasi,
         required this.gambar,
+        required this.penjual,
         required this.kamarTidur,
         required this.kamarMandi,
         required this.prioritas,
@@ -59,6 +61,7 @@ class Wishlist {
         harga: json["harga"],
         lokasi: json["lokasi"],
         gambar: json["gambar"],
+        penjual: json["penjual"],
         kamarTidur: json["kamar_tidur"],
         kamarMandi: json["kamar_mandi"],
         prioritas: json["prioritas"],
@@ -73,6 +76,7 @@ class Wishlist {
         "harga": harga,
         "lokasi": lokasi,
         "gambar": gambar,
+        "penjual": penjual,
         "kamar_tidur": kamarTidur,
         "kamar_mandi": kamarMandi,
         "prioritas": prioritas,
