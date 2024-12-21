@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
 
 class WishlistCard extends StatelessWidget {
   final Wishlist wishlist;
+  final CookieRequest request;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
   const WishlistCard({
     Key? key,
     required this.wishlist,
+    required this.request,
     required this.onDelete,
     required this.onEdit,
   }) : super(key: key);
@@ -132,7 +135,9 @@ class WishlistCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    wishlist.catatan.isNotEmpty ? wishlist.catatan : 'No notes',
+                    wishlist.catatan != null && wishlist.catatan!.isNotEmpty
+                      ? wishlist.catatan!
+                      : 'No notes',
                     style: const TextStyle(fontSize: 12, color: Colors.black45),
                     textAlign: TextAlign.right,
                   ),
@@ -154,11 +159,33 @@ class WishlistCard extends StatelessWidget {
                 ),
                 // Delete Button
                 IconButton(
-                  onPressed: onDelete,
                   icon: const Icon(
                     Icons.delete,
                     color: Colors.red,
                   ),
+                  onPressed: () {
+                    // Confirm delete
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm Delete'),
+                        content: const Text('Are you sure you want to delete this item from your wishlist?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              onDelete(); 
+                            },
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -168,7 +195,7 @@ class WishlistCard extends StatelessWidget {
     );
   }
 
-  // Helper to build icon + text rows
+  // Helper to display an icon + text in a row
   Widget _buildIconText(IconData icon, String text) {
     return Row(
       children: [
