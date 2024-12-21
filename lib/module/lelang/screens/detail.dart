@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/lelang/main.dart';
 import 'package:househunt_mobile/module/lelang/models/auction.dart';
@@ -19,8 +21,9 @@ class AuctionDetail extends StatefulWidget {
 }
 
 class _AuctionDetailState extends State<AuctionDetail> {
-  //final _formKey = GlobalKey<FormState>();
-  //int _bidValue = 0;
+  final _formKey = GlobalKey<FormState>();
+  int _bidValue = 0;
+  late Future<Auction> _auctionFuture;
 
   Future<List<AvailableAuction>> fetchHouses(CookieRequest request) async {
     final response =
@@ -46,6 +49,20 @@ class _AuctionDetailState extends State<AuctionDetail> {
     Auction auction = Auction.fromJson(data);
 
     return auction;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final request = context.read<CookieRequest>();
+    _auctionFuture = fetchDetailAuction(request);
+  }
+
+  void refreshAuction() {
+    setState(() {
+      final request = context.read<CookieRequest>();
+      _auctionFuture = fetchDetailAuction(request);
+    });
   }
 
   DateTime convertToDateTime(String dateStr) {
@@ -85,7 +102,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
           child: Column(
             children: [
               FutureBuilder<Auction>(
-                future: fetchDetailAuction(request),
+                future: _auctionFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -321,10 +338,94 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                   const SizedBox(height: 16.0),
                                   if (auction.isActive &&
                                       request.jsonData['is_buyer'])
-                                    Column(
-                                      children: [
-
-                                      ],
+                                    Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        children: [
+                                          TextFormField(
+                                            decoration: const InputDecoration(
+                                              labelText: 'Bid Value',
+                                              hintText: 'Enter your bid',
+                                            ),
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (String? value) {
+                                              setState(() {
+                                                _bidValue =
+                                                    int.tryParse(value!) ?? 0;
+                                              });
+                                            },
+                                            validator: (String? value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Mohon masukkan nilai bid anda';
+                                              } else if (int.tryParse(value) ==
+                                                  null) {
+                                                return 'Nilai bid harus berupa angka';
+                                              } else if (int.tryParse(value)! <=
+                                                  auction.currentPrice) {
+                                                return 'Nilai bid harus lebih tinggi dari bid sebelumnya';
+                                              } else if (int.tryParse(value)! <
+                                                  auction.startingPrice) {
+                                                return 'Nilai bid harus lebih tinggi dari harga awal';
+                                              } else if (int.tryParse(value)! %
+                                                      1000 !=
+                                                  0) {
+                                                return 'Nilai bid harus kelipatan 1000';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          const SizedBox(height: 16.0),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.white,
+                                              minimumSize: const Size(
+                                                  double.infinity, 50),
+                                              backgroundColor: Colors.green,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 16.0),
+                                            ),
+                                            child: const Text('Bid'),
+                                            onPressed: () async {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                final response =
+                                                    await request.postJson(
+                                                  "http://127.0.0.1:8000/auction/bid/api/${auction.id}/",
+                                                  jsonEncode(
+                                                    <String, String>{
+                                                      "price":
+                                                          _bidValue.toString(),
+                                                    },
+                                                  ),
+                                                );
+                                                if (context.mounted) {
+                                                  if (response['status'] ==
+                                                      true) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                      content: Text(
+                                                          "Bid kamu berhasil ditambahkan!"),
+                                                    ));
+                                                    refreshAuction();
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content: Text(response[
+                                                              'message'] ??
+                                                          "Terdapat kesalahan, silakan coba lagi."),
+                                                    ));
+                                                  }
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   if (!auction.isActive &&
                                       !request.jsonData['is_buyer'] &&
