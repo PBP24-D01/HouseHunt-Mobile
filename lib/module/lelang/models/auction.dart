@@ -11,6 +11,7 @@ String auctionToJson(Auction data) => json.encode(data.toJson());
 class Auction {
     String id;
     String title;
+    String houseId;
     String houseUrl;
     String houseTitle;
     String houseAddress;
@@ -31,6 +32,7 @@ class Auction {
     Auction({
         required this.id,
         required this.title,
+        required this.houseId,
         required this.houseUrl,
         required this.houseTitle,
         required this.houseAddress,
@@ -52,6 +54,7 @@ class Auction {
     factory Auction.fromJson(Map<String, dynamic> json) => Auction(
         id: json["id"],
         title: json["title"],
+        houseId: json["house_id"].toString(),
         houseUrl: json["house_url"],
         houseTitle: json["house_title"],
         houseAddress: json["house_address"],
