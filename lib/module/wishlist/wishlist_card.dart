@@ -4,11 +4,13 @@ import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
 class WishlistCard extends StatelessWidget {
   final Wishlist wishlist;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const WishlistCard({
     Key? key,
     required this.wishlist,
     required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -27,7 +29,7 @@ class WishlistCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                wishlist.gambar,
+                'http://127.0.0.1:8000${wishlist.gambar}',
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -50,17 +52,26 @@ class WishlistCard extends StatelessWidget {
             ),
 
             // Location
-            Text(
-              wishlist.lokasi,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+            Row(
+              children: [
+                const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    wishlist.lokasi,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
 
             // Price
             Text(
-              "\Rp${wishlist.harga}",
+              "Rp${wishlist.harga}",
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -70,11 +81,40 @@ class WishlistCard extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Priority & Delete Button
+            // Description
+            Text(
+              wishlist.deskripsi,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Bedrooms, Bathrooms, and Seller
+            Row(
+              children: [
+                // Align Bedrooms and Bathrooms to the left
+                Expanded(
+                  child: Row(
+                    children: [
+                      _buildIconText(Icons.bed, "${wishlist.kamarTidur}"),
+                      const SizedBox(width: 8),
+                      _buildIconText(Icons.bathtub, "${wishlist.kamarMandi}"),
+                    ],
+                  ),
+                ),
+                // Align Seller to the right
+                _buildIconText(Icons.person, wishlist.penjual),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            // Priority & Notes
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Priority Indicator
                 Row(
                   children: [
                     Icon(
@@ -83,10 +123,35 @@ class WishlistCard extends StatelessWidget {
                       size: 18,
                     ),
                     const SizedBox(width: 5),
-                    Text(wishlist.prioritas),
+                    Text(
+                      wishlist.prioritas.isNotEmpty
+                          ? wishlist.prioritas
+                          : 'Unknown',
+                    ),
                   ],
                 ),
+                Expanded(
+                  child: Text(
+                    wishlist.catatan.isNotEmpty ? wishlist.catatan : 'No notes',
+                    style: const TextStyle(fontSize: 12, color: Colors.black45),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ],
+            ),
 
+            const SizedBox(height: 8),
+
+            // Action Buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Edit Button
+                TextButton.icon(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  label: const Text("Edit"),
+                ),
                 // Delete Button
                 IconButton(
                   onPressed: onDelete,
@@ -103,6 +168,21 @@ class WishlistCard extends StatelessWidget {
     );
   }
 
+  // Helper to build icon + text rows
+  Widget _buildIconText(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
+
+  // Helper to determine priority color
   Color _getPriorityColor(String priority) {
     switch (priority.toLowerCase()) {
       case 'high':
