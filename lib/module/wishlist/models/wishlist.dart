@@ -1,21 +1,21 @@
 // To parse this JSON data, do
 //
-//     final product = productFromJson(jsonString);
+//     final welcome = welcomeFromJson(jsonString);
 
 import 'dart:convert';
 
-Product productFromJson(String str) => Product.fromJson(json.decode(str));
+Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
 
-String productToJson(Product data) => json.encode(data.toJson());
+String welcomeToJson(Welcome data) => json.encode(data.toJson());
 
-class Product {
+class Welcome {
     List<Wishlist> wishlists;
 
-    Product({
+    Welcome({
         required this.wishlists,
     });
 
-    factory Product.fromJson(Map<String, dynamic> json) => Product(
+    factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
         wishlists: List<Wishlist>.from(json["wishlists"].map((x) => Wishlist.fromJson(x))),
     );
 
@@ -32,9 +32,11 @@ class Wishlist {
     int harga;
     String lokasi;
     String gambar;
+    String penjual;
     int kamarTidur;
     int kamarMandi;
     String prioritas;
+    String? catatan;
 
     Wishlist({
         required this.id,
@@ -44,9 +46,11 @@ class Wishlist {
         required this.harga,
         required this.lokasi,
         required this.gambar,
+        required this.penjual,
         required this.kamarTidur,
         required this.kamarMandi,
         required this.prioritas,
+        this.catatan,
     });
 
     factory Wishlist.fromJson(Map<String, dynamic> json) => Wishlist(
@@ -57,9 +61,11 @@ class Wishlist {
         harga: json["harga"],
         lokasi: json["lokasi"],
         gambar: json["gambar"],
+        penjual: json["penjual"],
         kamarTidur: json["kamar_tidur"],
         kamarMandi: json["kamar_mandi"],
         prioritas: json["prioritas"],
+        catatan: json["catatan"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -70,8 +76,10 @@ class Wishlist {
         "harga": harga,
         "lokasi": lokasi,
         "gambar": gambar,
+        "penjual": penjual,
         "kamar_tidur": kamarTidur,
         "kamar_mandi": kamarMandi,
         "prioritas": prioritas,
+        "catatan": catatan,
     };
 }

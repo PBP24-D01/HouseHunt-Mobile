@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
+import 'package:househunt_mobile/module/wishlist/wishlist_edit.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -17,18 +18,16 @@ class _WishlistPageState extends State<WishlistPage> {
   Future<List<Wishlist>> fetchWishlist(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/wishlist/json/');
 
-    // Ensure the response is valid
+    // If response is null or not a Map, return empty
     if (response == null || response is! Map) {
-      return []; // Return an empty list if the response is invalid
+      return [];
     }
 
-    var data = response['wishlists']; 
-
+    var data = response['wishlists'];
     if (data == null || data.isEmpty) {
       return [];
     }
 
-    // Process the data into a list of Wishlist objects
     List<Wishlist> wishlist = [];
     for (var d in data) {
       if (d != null) {
@@ -38,6 +37,49 @@ class _WishlistPageState extends State<WishlistPage> {
     return wishlist;
   }
 
+  void _handleDeleteWishlist(Wishlist item) async {
+    final request = context.read<CookieRequest>();
+
+    final url = 'http://127.0.0.1:8000/wishlist/delete-flutter/${item.rumahId}/';
+
+    try {
+      final response = await request.post(url, {'action': 'delete'});
+
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'])),
+        );
+        // Rebuild the widget to refresh the wishlist
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response['message']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  /// You can implement edit functionality here
+  Future<void> _handleEditWishlist(Wishlist wishlist, CookieRequest request) async {
+    final updated = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditWishlistPage(wishlist: wishlist),
+      ),
+    );
+
+    if (updated == true) {
+      setState(() {
+        // Reload or refresh the wishlist data
+        fetchWishlist(request);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -45,7 +87,7 @@ class _WishlistPageState extends State<WishlistPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wishlist'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
       body: Padding(
@@ -60,6 +102,7 @@ class _WishlistPageState extends State<WishlistPage> {
                 child: Text('Error: ${snapshot.error}'),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              // If the user has no wishlists
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -82,38 +125,40 @@ class _WishlistPageState extends State<WishlistPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. Rencanakan rumah terbaikmu bersama HouseHunt.',
+                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
+                        'Rencanakan rumah terbaikmu bersama HouseHunt.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          // Add navigation or action logic here
+                          // Navigate to your house listing page or somewhere else
                         },
-                        child: const Text('Cari Rumah'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo,
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           textStyle: const TextStyle(fontSize: 16),
                         ),
+                        child: const Text('Cari Rumah'),
                       ),
                     ],
                   ),
                 ),
               );
             } else {
-              // Display the wishlist items using WishlistCard
+              // We have wishlist data to display
+              final wishlistItems = snapshot.data!;
               return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: snapshot.data!.length,
+                itemCount: wishlistItems.length,
                 itemBuilder: (context, index) {
-                  final item = snapshot.data![index];
+                  final item = wishlistItems[index];
                   return WishlistCard(
-                    wishlist: item, // Pass the item data
-                    onDelete: () {
-                      // Handle item deletion
-                    },
+                    wishlist: item,  // Pass the item data
+                    request: request,  // Pass the request
+                    onDelete: () => _handleDeleteWishlist(item),
+                    onEdit: () => _handleEditWishlist(item, request),
                   );
                 },
               );
