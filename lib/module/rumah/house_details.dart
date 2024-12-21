@@ -27,7 +27,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   Future<void> checkUserType() async {
     final prefs = await SharedPreferences.getInstance();
     final isBuyer = prefs.getBool('is_buyer') ?? false;
-    final isSeller = !isBuyer;
+    final isSeller = prefs.getBool('is_seller') ?? false;
     final isAuthenticated = prefs.getBool('is_authenticated') ?? false;
 
     setState(() {
@@ -127,30 +127,34 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: isSeller
-            ? ElevatedButton(
+        child: isAuthenticated
+            ? (isSeller
+                ? ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditHousePage(house: widget.house),
+                        ),
+                      );
+                    },
+                    child: const Text('Edit House'),
+                  )
+                : ElevatedButton(
+                    onPressed: () {
+                      // Implement buy functionality
+                    },
+                    child: const Text('Buy House'),
+                  ))
+            : ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditHousePage(house: widget.house),
+                      builder: (context) => const LoginPage(),
                     ),
                   );
-                },
-                child: const Text('Edit House'),
-              )
-            : ElevatedButton(
-                onPressed: () {
-                  if (isAuthenticated) {
-                    // Implement buy functionality
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
-                  }
                 },
                 child: const Text('Buy House'),
               ),
