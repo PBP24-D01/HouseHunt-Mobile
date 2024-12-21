@@ -22,6 +22,7 @@ class Auction {
     int currentPrice;
     dynamic highestBuyer;
     String seller;
+    String sellerId;
     DateTime createdAt;
     DateTime updatedAt;
     bool isActive;
@@ -41,6 +42,7 @@ class Auction {
         required this.currentPrice,
         required this.highestBuyer,
         required this.seller,
+        required this.sellerId,
         required this.createdAt,
         required this.updatedAt,
         required this.isActive,
@@ -61,6 +63,7 @@ class Auction {
         currentPrice: json["current_price"],
         highestBuyer: json["highest_buyer"],
         seller: json["seller"],
+        sellerId: json["seller_id"].toString(),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         isActive: json["is_active"],
@@ -81,6 +84,7 @@ class Auction {
         "current_price": currentPrice,
         "highest_buyer": highestBuyer,
         "seller": seller,
+        "seller_id": sellerId,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "is_active": isActive,
