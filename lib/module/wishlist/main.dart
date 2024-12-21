@@ -114,6 +114,9 @@ class _WishlistPageState extends State<WishlistPage> {
                     onDelete: () {
                       // Handle item deletion
                     },
+                    onEdit: () {
+                      // Handle item edit
+                    },
                   );
                 },
               );
