@@ -17,18 +17,16 @@ class _WishlistPageState extends State<WishlistPage> {
   Future<List<Wishlist>> fetchWishlist(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/wishlist/json/');
 
-    // Ensure the response is valid
+    // If response is null or not a Map, return empty
     if (response == null || response is! Map) {
-      return []; // Return an empty list if the response is invalid
+      return [];
     }
 
-    var data = response['wishlists']; 
-
+    var data = response['wishlists'];
     if (data == null || data.isEmpty) {
       return [];
     }
 
-    // Process the data into a list of Wishlist objects
     List<Wishlist> wishlist = [];
     for (var d in data) {
       if (d != null) {
@@ -36,6 +34,52 @@ class _WishlistPageState extends State<WishlistPage> {
       }
     }
     return wishlist;
+  }
+
+  /// This method is called by the card's onDelete callback.
+  /// It sends the delete request to your Django backend,
+  /// shows a SnackBar with the response, and calls setState
+  /// to refresh the FutureBuilder.
+  void _handleDeleteWishlist(Wishlist item) async {
+    final request = context.read<CookieRequest>();
+
+  //   if (!request.loggedIn) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('You must log in first!')),
+  //   );
+  //   return;
+  // }
+
+    final url = 'http://127.0.0.1:8000/wishlist/delete-flutter/${item.rumahId}/';
+
+    try {
+      // Because we're using pbp_django_auth, the session cookie and CSRF
+      // token are automatically included if the user is logged in.
+      final response = await request.post(url, {'action': 'delete'});
+
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'])),
+        );
+        // Rebuild the widget to refresh the wishlist
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response['message']}')),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  /// You can implement edit functionality here
+  void _handleEditWishlist(Wishlist wishlist) {
+    // For example, navigate to an "Edit Wishlist" screen or show a dialog
+    print('Editing wishlist: ${wishlist.id}');
   }
 
   @override
@@ -60,6 +104,7 @@ class _WishlistPageState extends State<WishlistPage> {
                 child: Text('Error: ${snapshot.error}'),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              // If the user has no wishlists
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -82,41 +127,40 @@ class _WishlistPageState extends State<WishlistPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. Rencanakan rumah terbaikmu bersama HouseHunt.',
+                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
+                        'Rencanakan rumah terbaikmu bersama HouseHunt.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          // Add navigation or action logic here
+                          // Navigate to your house listing page or somewhere else
                         },
-                        child: const Text('Cari Rumah'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo,
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           textStyle: const TextStyle(fontSize: 16),
                         ),
+                        child: const Text('Cari Rumah'),
                       ),
                     ],
                   ),
                 ),
               );
             } else {
-              // Display the wishlist items using WishlistCard
+              // We have wishlist data to display
+              final wishlistItems = snapshot.data!;
               return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: snapshot.data!.length,
+                itemCount: wishlistItems.length,
                 itemBuilder: (context, index) {
-                  final item = snapshot.data![index];
+                  final item = wishlistItems[index];
                   return WishlistCard(
-                    wishlist: item, // Pass the item data
-                    onDelete: () {
-                      // Handle item deletion
-                    },
-                    onEdit: () {
-                      // Handle item edit
-                    },
+                    wishlist: item,  // Pass the item data
+                    request: request,  // Pass the request
+                    onDelete: () => _handleDeleteWishlist(item),
+                    onEdit: () => _handleEditWishlist(item),
                   );
                 },
               );
