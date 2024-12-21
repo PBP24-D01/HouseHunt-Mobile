@@ -12,7 +12,21 @@ import 'package:househunt_mobile/module/lelang/models/available_auction.dart';
 
 class AuctionFormPage extends StatefulWidget {
   final List<AvailableAuction> house;
-  const AuctionFormPage({super.key, required this.house});
+  final bool isEdit;
+  final String? id;
+  final String? title;
+  final AvailableAuction? editHouse;
+  final DateTimeRange? dateTimeRange;
+  final int? startingPrice;
+  const AuctionFormPage(
+      {super.key,
+      required this.house,
+      this.id,
+      this.isEdit = false,
+      this.title,
+      this.editHouse,
+      this.dateTimeRange,
+      this.startingPrice});
 
   @override
   State<AuctionFormPage> createState() => _AuctionFormPageState();
@@ -30,7 +44,7 @@ class _AuctionFormPageState extends State<AuctionFormPage> {
       context: context,
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
-      initialDateRange: _selectedDateTimeRange,
+      initialDateRange: widget.dateTimeRange ?? _selectedDateTimeRange,
       builder: (context, child) {
         return Column(
           children: [
@@ -127,6 +141,7 @@ class _AuctionFormPageState extends State<AuctionFormPage> {
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                     ),
+                    initialValue: widget.title ?? "",
                     onChanged: (String? value) {
                       setState(() {
                         _title = value!;
@@ -145,13 +160,19 @@ class _AuctionFormPageState extends State<AuctionFormPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: DropdownButtonFormField<String>(
                     decoration: InputDecoration(
-                      hintText: "Pilih Rumah",
+                      hintText: widget.editHouse != null
+                          ? widget.editHouse!.title
+                          : "Pilih Rumah",
                       labelText: "Rumah",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                     ),
-                    items: widget.house.map((house) {
+                    items: (widget.house +
+                            (widget.editHouse != null
+                                ? [widget.editHouse!]
+                                : []))
+                        .map((house) {
                       return DropdownMenuItem<String>(
                         value: house.id,
                         child: Text(house.title),
@@ -224,6 +245,7 @@ class _AuctionFormPageState extends State<AuctionFormPage> {
                         _startingPrice = int.tryParse(value!) ?? 0;
                       });
                     },
+                    initialValue: widget.startingPrice?.toString() ?? "",
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
                         return "Harga Awal Lelang tidak boleh kosong!";
@@ -250,7 +272,7 @@ class _AuctionFormPageState extends State<AuctionFormPage> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final response = await request.postJson(
-                            "http://127.0.0.1:8000/auction/create/api/",
+                            widget.isEdit ? "http://127.0.0.1:8000/auction/edit/api/${widget.id}/" : "http://127.0.0.1:8000/auction/create/api/",
                             jsonEncode(
                               <String, String>{
                                 "title": _title,

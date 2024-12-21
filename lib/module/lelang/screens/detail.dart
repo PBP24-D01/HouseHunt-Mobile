@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/lelang/main.dart';
 import 'package:househunt_mobile/module/lelang/models/auction.dart';
+import 'package:househunt_mobile/module/lelang/models/available_auction.dart';
+import 'package:househunt_mobile/module/lelang/screens/lelang_form.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,24 @@ class AuctionDetail extends StatefulWidget {
 }
 
 class _AuctionDetailState extends State<AuctionDetail> {
+  //final _formKey = GlobalKey<FormState>();
+  //int _bidValue = 0;
+
+  Future<List<AvailableAuction>> fetchHouses(CookieRequest request) async {
+    final response =
+        await request.get('http://127.0.0.1:8000/auction/available-houses/');
+
+    var data = response;
+
+    List<AvailableAuction> houses = [];
+    for (var house in data) {
+      if (house != null) {
+        houses.add(AvailableAuction.fromJson(house));
+      }
+    }
+    return houses;
+  }
+
   Future<Auction> fetchDetailAuction(CookieRequest request) async {
     final response = await request
         .get('http://127.0.0.1:8000/auction/get/${widget.auctionId}/');
@@ -26,6 +46,15 @@ class _AuctionDetailState extends State<AuctionDetail> {
     Auction auction = Auction.fromJson(data);
 
     return auction;
+  }
+
+  DateTime convertToDateTime(String dateStr) {
+    String formattedDateString = dateStr.replaceAllMapped(
+        RegExp(r'(\d{2}):(\d{2}):(\d{2}) (\d{2})-(\d{2})-(\d{4})'),
+        (match) =>
+            '${match[6]}-${match[5]}-${match[4]}T${match[1]}:${match[2]}:${match[3]}');
+
+    return DateTime.parse(formattedDateString);
   }
 
   @override
@@ -269,109 +298,206 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                       ),
                                     ],
                                   ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Starting Price: IDR: ',
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Rp ${auction.startingPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   const SizedBox(height: 16.0),
+                                  if (auction.isActive &&
+                                      request.jsonData['is_buyer'])
+                                    Column(
+                                      children: [
+
+                                      ],
+                                    ),
                                   if (!auction.isActive &&
                                       !request.jsonData['is_buyer'] &&
                                       auction.sellerId ==
                                           request.jsonData['id'].toString())
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
+                                    FutureBuilder<List<AvailableAuction>>(
+                                        future: fetchHouses(request),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<
+                                                    List<AvailableAuction>>
+                                                snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8.0),
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                        ),
+                                                        backgroundColor:
+                                                            const Color
+                                                                .fromRGBO(
+                                                                74, 98, 138, 1),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 12.0),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AuctionFormPage(
+                                                                    house: snapshot
+                                                                            .data ??
+                                                                        [],
+                                                                    id: auction
+                                                                        .id,
+                                                                    isEdit:
+                                                                        true,
+                                                                    title: auction
+                                                                        .title,
+                                                                    editHouse: AvailableAuction(
+                                                                        id: auction
+                                                                            .houseId,
+                                                                        title: auction
+                                                                            .houseTitle),
+                                                                    dateTimeRange: DateTimeRange(
+                                                                        start: convertToDateTime(auction
+                                                                            .startDate),
+                                                                        end: convertToDateTime(
+                                                                            auction.endDate)),
+                                                                    startingPrice:
+                                                                        auction
+                                                                            .startingPrice,
+                                                                  )),
+                                                        );
+                                                      },
+                                                      child: const Text(
+                                                        'Edit',
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        74, 98, 138, 1),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0),
-                                              ),
-                                              onPressed: () {
-                                                // Edit functionality here
-                                              },
-                                              child: const Text(
-                                                'Edit',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                ),
-                                                backgroundColor:
-                                                    Colors.redAccent,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0),
-                                              ),
-                                              onPressed: () async {
-                                                final response = await request.get(
-                                                    "http://127.0.0.1:8000/auction/delete/api/${widget.auctionId}/");
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8.0),
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                        ),
+                                                        backgroundColor:
+                                                            Colors.redAccent,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 12.0),
+                                                      ),
+                                                      onPressed: () async {
+                                                        final response =
+                                                            await request.get(
+                                                                "http://127.0.0.1:8000/auction/delete/api/${widget.auctionId}/");
 
-                                                if (context.mounted) {
-                                                  if (response['status'] ==
-                                                      true) {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                            const SnackBar(
-                                                      content: Text(
-                                                          "Lelang berhasil dihapus!"),
-                                                    ));
-                                                    Navigator.of(context).popUntil((route) => route.isFirst);
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              AuctionPage()),
-                                                    );
-                                                  } else {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(SnackBar(
-                                                      content: Text(response[
-                                                              'message'] ??
-                                                          "Terdapat kesalahan, silakan coba lagi."),
-                                                    ));
-                                                  }
-                                                }
-                                              },
-                                              child: const Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                                        if (context.mounted) {
+                                                          if (response[
+                                                                  'status'] ==
+                                                              true) {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    const SnackBar(
+                                                              content: Text(
+                                                                  "Lelang berhasil dihapus!"),
+                                                            ));
+                                                            Navigator.of(
+                                                                    context)
+                                                                .popUntil((route) =>
+                                                                    route
+                                                                        .isFirst);
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          AuctionPage()),
+                                                            );
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    SnackBar(
+                                                              content: Text(response[
+                                                                      'message'] ??
+                                                                  "Terdapat kesalahan, silakan coba lagi."),
+                                                            ));
+                                                          }
+                                                        }
+                                                      },
+                                                      child: const Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }
+                                        }),
                                 ]),
                           ),
                         ),
