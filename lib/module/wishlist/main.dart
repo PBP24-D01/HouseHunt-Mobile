@@ -89,7 +89,7 @@ class _WishlistPageState extends State<WishlistPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wishlist'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
       body: Padding(
