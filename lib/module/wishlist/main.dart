@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
 import 'package:househunt_mobile/module/wishlist/wishlist_edit.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
@@ -133,7 +134,10 @@ class _WishlistPageState extends State<WishlistPage> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          // Navigate to your house listing page or somewhere else
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomePage()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo,
