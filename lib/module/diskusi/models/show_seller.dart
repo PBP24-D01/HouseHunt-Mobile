@@ -9,7 +9,7 @@ List<ShowSeller> showSellerFromJson(String str) => List<ShowSeller>.from(json.de
 String showSellerToJson(List<ShowSeller> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class ShowSeller {
-    Model model;
+    String model;
     int pk;
     Fields fields;
 
@@ -20,13 +20,13 @@ class ShowSeller {
     });
 
     factory ShowSeller.fromJson(Map<String, dynamic> json) => ShowSeller(
-        model: modelValues.map[json["model"]]!,
+        model: json["model"],
         pk: json["pk"],
         fields: Fields.fromJson(json["fields"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "model": modelValues.reverse[model],
+        "model": model,
         "pk": pk,
         "fields": fields.toJson(),
     };
@@ -60,13 +60,6 @@ class Fields {
     };
 }
 
-enum Model {
-    HOUSE_HUNT_AUTH_SELLER
-}
-
-final modelValues = EnumValues({
-    "HouseHuntAuth.seller": Model.HOUSE_HUNT_AUTH_SELLER
-});
 
 class EnumValues<T> {
     Map<String, T> map;

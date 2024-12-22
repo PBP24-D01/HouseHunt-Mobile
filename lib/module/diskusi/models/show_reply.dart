@@ -9,7 +9,7 @@ List<ShowReply> showReplyFromJson(String str) => List<ShowReply>.from(json.decod
 String showReplyToJson(List<ShowReply> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class ShowReply {
-    Model model;
+    String model;
     String pk;
     Fields fields;
 
@@ -20,13 +20,13 @@ class ShowReply {
     });
 
     factory ShowReply.fromJson(Map<String, dynamic> json) => ShowReply(
-        model: modelValues.map[json["model"]]!,
+        model: json["model"],
         pk: json["pk"],
         fields: Fields.fromJson(json["fields"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "model": modelValues.reverse[model],
+        "model": model,
         "pk": pk,
         "fields": fields.toJson(),
     };
@@ -34,7 +34,7 @@ class ShowReply {
 
 class Fields {
     String parentComment;
-    Name name;
+    String name;
     String body;
     DateTime created;
 
@@ -47,36 +47,19 @@ class Fields {
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
         parentComment: json["parent_comment"],
-        name: nameValues.map[json["name"]]!,
+        name: json["name"],
         body: json["body"],
         created: DateTime.parse(json["created"]),
     );
 
     Map<String, dynamic> toJson() => {
         "parent_comment": parentComment,
-        "name": nameValues.reverse[name],
+        "name": name,
         "body": body,
         "created": created.toIso8601String(),
     };
 }
 
-enum Name {
-    BUDI,
-    BUDI_ARI
-}
-
-final nameValues = EnumValues({
-    "budi": Name.BUDI,
-    "budi ari": Name.BUDI_ARI
-});
-
-enum Model {
-    DISKUSI_REPLY
-}
-
-final modelValues = EnumValues({
-    "diskusi.reply": Model.DISKUSI_REPLY
-});
 
 class EnumValues<T> {
     Map<String, T> map;

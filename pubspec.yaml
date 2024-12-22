@@ -38,6 +38,8 @@ dependencies:
   pbp_django_auth: ^0.4.0
   http: ^1.2.2
   image_picker: ^0.8.4+4
+  intl: ^0.20.1
+  flutter_timer_countdown: ^1.0.7
 
 dev_dependencies:
   flutter_test:
