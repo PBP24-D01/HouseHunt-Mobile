@@ -196,7 +196,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
                                 final request =
                                 context.read<CookieRequest>();
                                 final response = await request.postJson(
-                                  'http://127.0.0.1:8000/cekrumah/api/delete_appointment/${appointment['id']}/',
+                                  'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/delete_appointment/${appointment['id']}/',
                                   jsonEncode({'key': 'value'}),
                                 );
                                 if (response['success']) {
