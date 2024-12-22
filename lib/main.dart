@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
           ).copyWith(secondary: Colors.grey[800]),
           useMaterial3: true,
         ),
+        debugShowCheckedModeBanner: false,
         home: const HomePage(),
       ),
     );
