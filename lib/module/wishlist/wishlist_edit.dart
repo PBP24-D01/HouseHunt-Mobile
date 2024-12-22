@@ -82,7 +82,7 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  'http://127.0.0.1:8000${widget.wishlist.gambar}',
+                  'http://https://tristan-agra-househunt.pbp.cs.ui.ac.id${widget.wishlist.gambar}',
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
