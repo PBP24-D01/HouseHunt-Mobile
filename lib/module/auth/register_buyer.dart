@@ -206,6 +206,7 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Successfully registered!'),
+                              backgroundColor: Colors.green,
                             ),
                           );
                           Navigator.pushReplacement(
@@ -218,6 +219,7 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
                             SnackBar(
                               content: Text(
                                   'Failed to register! ${response['message']}'),
+                              backgroundColor: Colors.red,
                             ),
                           );
                         }

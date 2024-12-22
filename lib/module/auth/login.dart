@@ -86,11 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () async {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
-                      final response = await request
-                          .login("https://tristan-agra-househunt.pbp.cs.ui.ac.id/login/flutter/", {
-                        'username': username,
-                        'password': password,
-                      });
+                      final response = await request.login(
+                          "https://tristan-agra-househunt.pbp.cs.ui.ac.id/login/flutter/",
+                          {
+                            'username': username,
+                            'password': password,
+                          });
 
                       if (request.loggedIn) {
                         String message = response['message'];
@@ -105,8 +106,10 @@ class _LoginPageState extends State<LoginPage> {
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               SnackBar(
-                                  content:
-                                      Text("$message Selamat datang, $uname.")),
+                                content:
+                                    Text("$message Selamat datang, $uname."),
+                                backgroundColor: Colors.green,
+                              ),
                             );
                         }
                       } else {
