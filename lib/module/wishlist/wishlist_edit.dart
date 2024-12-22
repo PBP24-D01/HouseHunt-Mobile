@@ -72,6 +72,122 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
           key: _formKey,
           child: Column(
             children: [
+              // Displaying all the information from the WishlistCard
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  'http://127.0.0.1:8000${widget.wishlist.gambar}',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.image_not_supported,
+                    size: 150,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Title
+              Text(
+                widget.wishlist.judul,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              // Location
+              Row(
+                children: [
+                  const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      widget.wishlist.lokasi,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Price
+              Text(
+                "Rp${widget.wishlist.harga}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.teal,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Description
+              Text(
+                widget.wishlist.deskripsi,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Bedrooms, Bathrooms, and Seller
+              Row(
+                children: [
+                  // Align Bedrooms and Bathrooms to the left
+                  Expanded(
+                    child: Row(
+                      children: [
+                        _buildIconText(Icons.bed, "${widget.wishlist.kamarTidur}"),
+                        const SizedBox(width: 8),
+                        _buildIconText(Icons.bathtub, "${widget.wishlist.kamarMandi}"),
+                      ],
+                    ),
+                  ),
+                  // Align Seller to the right
+                  _buildIconText(Icons.person, widget.wishlist.penjual),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // Priority & Notes
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.flag,
+                        color: _getPriorityColor(widget.wishlist.prioritas),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(widget.wishlist.prioritas.capitalize()),
+                    ],
+                  ),
+                  Expanded(
+                    child: Text(
+                      widget.wishlist.catatan != null && widget.wishlist.catatan!.isNotEmpty
+                          ? widget.wishlist.catatan!
+                          : 'No notes',
+                      style: const TextStyle(fontSize: 12, color: Colors.black45),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // Dropdown for Priority
               DropdownButtonFormField<String>(
                 value: priority,
                 onChanged: (newValue) {
@@ -90,7 +206,10 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
                   border: OutlineInputBorder(),
                 ),
               ),
+
               const SizedBox(height: 16),
+
+              // Notes TextField
               TextFormField(
                 initialValue: notes,
                 onChanged: (value) {
@@ -102,7 +221,10 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
                 ),
                 maxLines: 5,
               ),
+
               const SizedBox(height: 20),
+
+              // Save Button
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
@@ -122,6 +244,34 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
         ),
       ),
     );
+  }
+
+  // Helper to display an icon + text in a row
+  Widget _buildIconText(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
+
+  // Helper to determine priority color
+  Color _getPriorityColor(String priority) {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return Colors.red;
+      case 'medium':
+        return Colors.orange;
+      case 'low':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 }
 
