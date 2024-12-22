@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/rumah/models/house.dart';
-import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -35,62 +36,57 @@ class _CreateHousePageState extends State<CreateHousePage> {
     fetchFormOptions();
   }
 
+  // fetch form
   Future<void> fetchFormOptions() async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/form-options/');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    try {
+      final response =
+          await request.get('http://127.0.0.1:8000/api/form-options/');
       setState(() {
-        locations = List<String>.from(data['locations']);
-        priceRanges = List<String>.from(data['price_ranges']);
-        bedroomOptions = List<String>.from(data['bedrooms']);
-        bathroomOptions = List<String>.from(data['bathrooms']);
+        locations = List<String>.from(response['locations']);
+        priceRanges = List<String>.from(response['price_ranges']);
+        bedroomOptions = List<String>.from(response['bedrooms']);
+        bathroomOptions = List<String>.from(response['bathrooms']);
       });
-    } else {
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load form options.')),
+        SnackBar(content: Text('Failed to load form options: $e')),
       );
     }
   }
 
+  // form
   Future<void> createHouse() async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/houses/create/');
-
-    var request = http.MultipartRequest('POST', url);
-
-    request.fields['judul'] = title!;
-    request.fields['deskripsi'] = description!;
-    request.fields['harga'] = price!.toString();
-    request.fields['lokasi'] = location!;
-    request.fields['kamar_tidur'] = bedrooms!.toString();
-    request.fields['kamar_mandi'] = bathrooms!.toString();
-    request.fields['is_available'] = isAvailable.toString();
-
-    request.headers.remove('Authorization');
-
-    // img
-    if (imageFile != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath('gambar', imageFile!.path),
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    try {
+      final response = await request.post(
+        'http://127.0.0.1:8000/api/houses/create/',
+        {
+          'judul': title!,
+          'deskripsi': description!,
+          'harga': price!.toString(),
+          'lokasi': location!,
+          'kamar_tidur': bedrooms!.toString(),
+          'kamar_mandi': bathrooms!.toString(),
+          'is_available': isAvailable.toString(),
+          if (imageFile != null)
+            'gambar': base64Encode(imageFile!.readAsBytesSync()),
+        },
       );
-    }
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-
-    if (response.statusCode == 201) {
-      var responseData = json.decode(response.body);
-      int newHouseId = responseData['id'];
-
+      if (response['id'] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'House created successfully with ID: ${response['id']}')),
+        );
+        Navigator.pop(context);
+      } else {
+        throw Exception('Failed to create house');
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('House created successfully with ID: $newHouseId')),
-      );
-      Navigator.pop(context); // Return to previous screen
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create house: ${response.body}')),
+        SnackBar(content: Text('Failed to create house: $e')),
       );
     }
   }
