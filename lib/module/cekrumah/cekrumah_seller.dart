@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/module/cekrumah/models/availability.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'NewAvailabilityDialog.dart';
 
 class CekRumahSeller extends StatefulWidget {
   const CekRumahSeller({super.key});
@@ -37,7 +41,7 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
         isLoading = false;
       });
     } else {
-      if (mounted){
+      if (mounted) {
         setState(() {
           isLoading = false;
         });
@@ -53,7 +57,11 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Cek Rumah Seller')),
+      appBar: AppBar(
+        title: Text('Cek Rumah Seller', style: TextStyle(color: Colors.white),),
+        backgroundColor: Color(0xFF4A628A), // Primary color applied
+      ),
+      drawer: const LeftDrawer(),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -61,6 +69,23 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              ElevatedButton(
+                onPressed: () async {
+                  final availability = await showDialog<Availability>(
+                    context: context,
+                    builder: (context) => NewAvailabilityDialog(),
+                  );
+
+                  if (availability != null) {
+                    await createAvailability(availability);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF4A628A), // Primary color applied
+                ),
+                child: Text('Add Availability', style: TextStyle(color: Colors.white),),
+              ),
+
               // Availability List
               availabilities.isNotEmpty
                   ? Column(
@@ -68,44 +93,62 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
                 children: [
                   Text('Your Available Slots',
                       style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                  DataTable(
-                    columns: [
-                      DataColumn(label: Text('House')),
-                      DataColumn(label: Text('Date')),
-                      DataColumn(label: Text('Start Time')),
-                      DataColumn(label: Text('End Time')),
-                      DataColumn(label: Text('Available')),
-                      DataColumn(label: Text('Edit')),
-                      DataColumn(label: Text('Delete')),
-                    ],
-                    rows: availabilities.map((availability) {
-                      return DataRow(cells: [
-                        DataCell(Text(
-                            availability['house']['name'] ?? '')),
-                        DataCell(Text(
-                            availability['available_date'] ?? '')),
-                        DataCell(Text(
-                            availability['start_time'] ?? '')),
-                        DataCell(Text(availability['end_time'] ??
-                            '')),
-                        DataCell(Text(
-                            availability['is_available'] ? 'Yes' : 'No')),
-                        DataCell(IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            // Navigate to edit page
-                          },
-                        )),
-                        DataCell(IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            // Delete logic here
-                          },
-                        )),
-                      ]);
-                    }).toList(),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  SizedBox(height: 10),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('House')),
+                        DataColumn(label: Text('Date')),
+                        DataColumn(label: Text('Start Time')),
+                        DataColumn(label: Text('End Time')),
+                        DataColumn(label: Text('Available')),
+                        DataColumn(label: Text('Edit')),
+                        DataColumn(label: Text('Delete')),
+                      ],
+                      rows: availabilities.map((availability) {
+                        return DataRow(cells: [
+                          DataCell(Text(
+                              availability['house']['name'] ?? '')),
+                          DataCell(Text(
+                              availability['available_date'] ?? '')),
+                          DataCell(Text(
+                              availability['start_time'] ?? '')),
+                          DataCell(Text(availability['end_time'] ?? '')),
+                          DataCell(Text(availability['is_available']
+                              ? 'Yes'
+                              : 'No')),
+                          DataCell(IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () async {
+                              final updatedAvailability =
+                              await showDialog<Availability>(
+                                context: context,
+                                builder: (context) =>
+                                    NewAvailabilityDialog(
+                                      existingAvailability: availability,
+                                    ),
+                              );
+
+                              if (updatedAvailability != null) {
+                                await updateAvailability(
+                                    availability['id'],
+                                    updatedAvailability);
+                              }
+                            },
+                          )),
+                          DataCell(IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              deleteAvailability(availability['id']);
+                            },
+                          )),
+                        ]);
+                      }).toList(),
+                    ),
                   ),
                 ],
               )
@@ -121,57 +164,75 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
                 children: [
                   Text('Your Appointments',
                       style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                  DataTable(
-                    columns: [
-                      DataColumn(label: Text('Buyer')),
-                      DataColumn(label: Text('House')),
-                      DataColumn(label: Text('Date')),
-                      DataColumn(label: Text('Start Time')),
-                      DataColumn(label: Text('End Time')),
-                      DataColumn(label: Text('Notes')),
-                      DataColumn(label: Text('Status')),
-                      DataColumn(label: Text('Actions')),
-                    ],
-                    rows: appointments.map((appointment) {
-                      final status = appointment['status'];
-                      Color statusColor = status == 'Approved'
-                          ? Colors.green
-                          : status == 'Canceled'
-                          ? Colors.red
-                          : Colors.orange;
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  SizedBox(height: 10),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('Buyer')),
+                        DataColumn(label: Text('House')),
+                        DataColumn(label: Text('Date')),
+                        DataColumn(label: Text('Start Time')),
+                        DataColumn(label: Text('End Time')),
+                        DataColumn(label: Text('Notes')),
+                        DataColumn(label: Text('Status')),
+                        DataColumn(label: Text('Actions')),
+                      ],
+                      rows: appointments.map((appointment) {
+                        final status = appointment['status'];
+                        Color statusColor = status == 'Approved'
+                            ? Colors.green
+                            : status == 'Canceled'
+                            ? Colors.red
+                            : Colors.orange;
 
-                      return DataRow(cells: [
-                        DataCell(Text(
-                            appointment['buyer']['username'] ??
-                                '')),
-                        DataCell(Text(
-                            appointment['house']['name'] ??
-                                '')),
-                        DataCell(Text(
-                            appointment['date'] ??
-                                '')),
-                        DataCell(Text(
-                            appointment['start_time'] ??
-                                '')),
-                        DataCell(Text(
-                            appointment['end_time'] ??
-                                '')),
-                        DataCell(Text(
-                            appointment['notes_to_seller'] ?? '')),
-                        DataCell(Text(
-                          appointment['status'],
-                          style: TextStyle(color: statusColor),
-                        )),
-                        DataCell(ElevatedButton(
-                          onPressed: () {
-                            // Update status logic here
-                          },
-                          child: Text('Update Status'),
-                        )),
-                      ]);
-                    }).toList(),
+                        return DataRow(cells: [
+                          DataCell(Text(
+                              appointment['buyer']['username'] ?? '')),
+                          DataCell(Text(
+                              appointment['house']['name'] ?? '')),
+                          DataCell(Text(appointment['date'] ?? '')),
+                          DataCell(Text(appointment['start_time'] ?? '')),
+                          DataCell(Text(appointment['end_time'] ?? '')),
+                          DataCell(Text(appointment['notes_to_seller'] ?? '')),
+                          DataCell(Text(
+                            appointment['status'],
+                            style: TextStyle(color: statusColor),
+                          )),
+                          DataCell(ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Update Status'),
+                                  content: DropdownButton<String>(
+                                    value: appointment['status'],
+                                    items: ['Pending', 'Approved', 'Canceled']
+                                        .map((status) =>
+                                        DropdownMenuItem(
+                                          value: status,
+                                          child: Text(status),
+                                        ))
+                                        .toList(),
+                                    onChanged: (newStatus) async {
+                                      if (newStatus != null) {
+                                        await updateAppointmentStatus(
+                                            appointment['id'], newStatus);
+                                        Navigator.of(context).pop();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text('Update Status', style: TextStyle(color: Colors.black),),
+                          )),
+                        ]);
+                      }).toList(),
+                    ),
                   ),
                 ],
               )
@@ -182,5 +243,96 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
         ),
       ),
     );
+  }
+
+  // The backend methods below are untouched
+
+  Future<void> deleteAvailability(int availabilityId) async {
+    final request = context.read<CookieRequest>();
+    final Map<String, dynamic> data = {
+      'id': availabilityId,
+    };
+
+    final response = await request.post(
+      'http://127.0.0.1:8000/cekrumah/api/availability/delete/',
+      jsonEncode(data),
+    );
+
+    if (response['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Availability deleted successfully')),
+      );
+      await fetchData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete availability')),
+      );
+    }
+  }
+
+  Future<void> updateAvailability(int availabilityId, Availability updatedAvailability) async {
+    final request = context.read<CookieRequest>();
+
+    final Map<String, dynamic> data = updatedAvailability.toJson();
+    data['id'] = availabilityId;
+
+    final response = await request.post(
+      'http://127.0.0.1:8000/cekrumah/api/availability/update/',
+      jsonEncode(data),
+    );
+
+    if (response['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Availability updated successfully')),
+      );
+      await fetchData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update availability')),
+      );
+    }
+  }
+
+  Future<void> createAvailability(Availability availability) async {
+    final request = context.read<CookieRequest>();
+    final response = await request.post(
+      'http://127.0.0.1:8000/cekrumah/api/create_availability/',
+      jsonEncode(availability.toJson()),
+    );
+
+    if (response['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Availability added successfully')),
+      );
+      await fetchData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add availability')),
+      );
+    }
+  }
+
+  Future<void> updateAppointmentStatus(int appointmentId, String newStatus) async {
+    final request = context.read<CookieRequest>();
+    final Map<String, dynamic> data = {
+      'id': appointmentId,
+      'status': newStatus,
+    };
+
+    final response = await request.post(
+      'http://127.0.0.1:8000/cekrumah/api/update_appointment_status/',
+      jsonEncode(data),
+    );
+
+    if (response['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Status updated successfully')),
+      );
+      await fetchData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update status: ${response["message"]}')),
+      );
+    }
   }
 }
