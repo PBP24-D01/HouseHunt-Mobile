@@ -67,17 +67,19 @@ class _CreateHousePageState extends State<CreateHousePage> {
     request.fields['kamar_mandi'] = bathrooms!.toString();
     request.fields['is_available'] = isAvailable.toString();
 
+    request.headers.remove('Authorization');
+
     // img
     if (imageFile != null) {
-      request.files
-          .add(await http.MultipartFile.fromPath('gambar', imageFile!.path));
+      request.files.add(
+        await http.MultipartFile.fromPath('gambar', imageFile!.path),
+      );
     }
 
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 201) {
-      // this should get id by django
       var responseData = json.decode(response.body);
       int newHouseId = responseData['id'];
 
@@ -85,7 +87,7 @@ class _CreateHousePageState extends State<CreateHousePage> {
         SnackBar(
             content: Text('House created successfully with ID: $newHouseId')),
       );
-      Navigator.pop(context); // return
+      Navigator.pop(context); // Return to previous screen
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to create house: ${response.body}')),
