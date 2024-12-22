@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/auth/register_buyer.dart';
@@ -23,13 +25,9 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
+      drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 0),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

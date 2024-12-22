@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -30,14 +32,9 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register as Buyer'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const LoginPage()));
-          },
-        ),
       ),
+      drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 2),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
