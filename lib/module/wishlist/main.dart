@@ -155,15 +155,29 @@ class _WishlistPageState extends State<WishlistPage> {
               final wishlistItems = snapshot.data!;
               return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: wishlistItems.length,
+                itemCount: wishlistItems.length + 1,  // Adding 1 to include the text at the bottom
                 itemBuilder: (context, index) {
-                  final item = wishlistItems[index];
-                  return WishlistCard(
-                    wishlist: item,  // Pass the item data
-                    request: request,  // Pass the request
-                    onDelete: () => _handleDeleteWishlist(item),
-                    onEdit: () => _handleEditWishlist(item, request),
-                  );
+                  if (index == wishlistItems.length) {
+                    // This is the last item (text)
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
+                        'Rencanakan rumah terbaikmu bersama HouseHunt.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                      ),
+                    );
+                  } else {
+                    // Return the wishlist card for each item
+                    final item = wishlistItems[index];
+                    return WishlistCard(
+                      wishlist: item,  // Pass the item data
+                      request: request,  // Pass the request
+                      onDelete: () => _handleDeleteWishlist(item),
+                      onEdit: () => _handleEditWishlist(item, request),
+                    );
+                  }
                 },
               );
             }
