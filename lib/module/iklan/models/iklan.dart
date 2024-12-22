@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 Iklan iklanFromJson(String str) => Iklan.fromJson(json.decode(str));
-
+List<Iklan> iklanFromListJson(String str) => List<Iklan>.from(json.decode(str).map((x) => Iklan.fromJson(x)));
 String iklanToJson(Iklan data) => json.encode(data.toJson());
+
+
 
 class Iklan {
   String id;
@@ -35,21 +37,23 @@ class Iklan {
     required this.bannerURL,
   });
 
-  factory Iklan.fromJson(Map<String, dynamic> json) => Iklan(
-        id: json["id"],
-        title: json["title"],
-        houseUrl: json["house_url"],
-        houseTitle: json["house_title"],
-        houseAddress: json["house_address"],
-        houseImageURL: json["house_image"],
-        housePrice: json["house_price"],
-        startDate: DateTime.parse(json["start_date"]),
-        endDate: DateTime.parse(json["end_date"]),
-        seller: json["seller"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        bannerURL: json["updated_at"],
-      );
+  factory Iklan.fromJson(Map<String, dynamic> json) {
+    return Iklan(
+      id: json['id'] ?? '', // Provide a default value if null
+      title: json['title'] ?? 'No Title', // Default title
+      houseUrl: json['houseUrl'] ?? '', // Default URL
+      houseTitle: json['houseTitle'] ?? '', // Default house title
+      houseAddress: json['houseAddress'] ?? 'Unknown Address', // Default address
+      houseImageURL: json['houseImageURL'] ?? '', // Default image URL
+      housePrice: json['housePrice'] ?? 0, // Default price
+      startDate: DateTime.tryParse(json['startDate'] ?? '') ?? DateTime.now(), // Default to now if parsing fails
+      endDate: DateTime.tryParse(json['endDate'] ?? '') ?? DateTime.now().add(Duration(days: 30)), // Default to 30 days from now
+      seller: json['seller'] ?? 'Unknown Seller', // Default seller
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(), // Default to now
+      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(), // Default to now
+      bannerURL: json['bannerURL'] ?? '', // Default banner URL
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
