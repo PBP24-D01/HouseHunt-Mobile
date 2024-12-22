@@ -224,6 +224,7 @@ class HouseCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 16),
           // Display the house image
           Image.network(
             house['gambar'] ?? 'https://via.placeholder.com/150',
