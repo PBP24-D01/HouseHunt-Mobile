@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/iklan/models/iklan.dart';
+import 'package:househunt_mobile/module/rumah/models/house.dart';
 import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -16,13 +17,38 @@ class IklanPage extends StatefulWidget {
 }
 
 class _IklanPageState extends State<IklanPage> {
+  late List<String> _houseList;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHouseNames(context.read<CookieRequest>());
+  }
+
+  Future<void> fetchHouseNames(CookieRequest request) async {
+    try {
+      final response = await request.get('http://127.0.0.1:8000/iklan/create/');
+      print(response);
+      if (response['houses'] != null) {
+        _houseList = (response['houses'] as List)
+            .map((houseData) => houseData['name'] as String)
+            .toList();
+      } else {
+        _houseList = [];
+      }
+      print(_houseList);
+    } catch (error) {
+      print('Error fetching house names: $error');
+      _houseList = [];
+    }
+  }
+
   Future<List<Iklan>> fetchIklan(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/iklan/json/');
-    List<Iklan> iklanList = (response['iklan'] as List)
+    final response2 = await request.get('http://127.0.0.1:8000/iklan/json/');
+    List<Iklan> iklanList = (response2['iklan'] as List)
         .map((iklanData) => Iklan.fromJson(iklanData))
         .toList();
     return iklanList;
-
   }
 
   Future<void> createIklan(CookieRequest request, Iklan iklan) async {
@@ -55,100 +81,103 @@ class _IklanPageState extends State<IklanPage> {
     }
   }
 
- void showCreateDialog(BuildContext context) {
-  String? selectedHouse; // Initialize selectedHouse to null
-  DateTime? startDate;
-  DateTime? endDate;
-  String? bannerFilePath; // Variable to hold the banner file path
+  void showCreateDialog(BuildContext context) {
+    String? selectedHouse; // Initialize selectedHouse to null
+    DateTime? startDate;
+    DateTime? endDate;
+    String? bannerFilePath; // Variable to hold the banner file path
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text('Create Iklan'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // House Selection Dropdown
-            DropdownButton<String>(
-              value: selectedHouse,
-              hint: Text('Select House'),
-              items: <String>['House 1', 'House 2', 'House 3'] // Replace with actual house list
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedHouse = newValue; // Update the selectedHouse variable
-                });
-              },
-            ),
-            // Start Date Picker
-            TextField(
-              readOnly: true,
-              decoration: InputDecoration(hintText: 'Select Start Date'),
-              onTap: () async {
-                startDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
-              },
-            ),
-            // End Date Picker
-            TextField(
-              readOnly: true,
-              decoration: InputDecoration(hintText: 'Select End Date'),
-              onTap: () async {
-                endDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now().add(Duration(days: 30)),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
-              },
-            ),
-            // Banner File Uploader
-            TextField(
-              readOnly: true,
-              decoration: InputDecoration(hintText: 'Upload Banner File'),
-              controller: TextEditingController(text: bannerFilePath), // Display the selected file path
-              onTap: () async {
-                // Open file picker
-                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                  type: FileType.image, // Specify the type of files to pick
-                );
-
-                if (result != null) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Create Iklan'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // House Selection Dropdown
+              DropdownButton<String>(
+                value: selectedHouse,
+                hint: Text('Select House'),
+                items: _houseList.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
                   setState(() {
-                    bannerFilePath = result.files.single.path; // Get the file path
+                    selectedHouse =
+                        newValue; // Update the selectedHouse variable
                   });
-                }
+                },
+              ),
+              // Start Date Picker
+              TextField(
+                readOnly: true,
+                decoration: InputDecoration(hintText: 'Select Start Date'),
+                onTap: () async {
+                  startDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2101),
+                  );
+                },
+              ),
+              // End Date Picker
+              TextField(
+                readOnly: true,
+                decoration: InputDecoration(hintText: 'Select End Date'),
+                onTap: () async {
+                  endDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now().add(Duration(days: 30)),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2101),
+                  );
+                },
+              ),
+              // Banner File Uploader
+              TextField(
+                readOnly: true,
+                decoration: InputDecoration(hintText: 'Upload Banner File'),
+                controller: TextEditingController(
+                    text: bannerFilePath), // Display the selected file path
+                onTap: () async {
+                  // Open file picker
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.image, // Specify the type of files to pick
+                  );
+
+                  if (result != null) {
+                    setState(() {
+                      bannerFilePath =
+                          result.files.single.path; // Get the file path
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Create Iklan logic here using the selected values
+                // Example:
+                // final newIklan = Iklan(...);
+                // createIklan(context.read<CookieRequest>(), newIklan);
+                Navigator.of(context).pop();
+                setState(() {}); // Refresh the list
               },
+              child: Text('Create'),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              // Create Iklan logic here using the selected values
-              // Example:
-              // final newIklan = Iklan(...);
-              // createIklan(context.read<CookieRequest>(), newIklan);
-              Navigator.of(context).pop();
-              setState(() {}); // Refresh the list
-            },
-            child: Text('Create'),
-          ),
-        ],
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   void showEditDialog(BuildContext context, Iklan iklan) {
     final titleController = TextEditingController(text: iklan.title);
