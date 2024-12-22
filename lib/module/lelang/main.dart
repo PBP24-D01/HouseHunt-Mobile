@@ -267,8 +267,8 @@ class _AuctionPageState extends State<AuctionPage>
           bottom: TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(text: 'Lelang Berlangsung'),
-              Tab(text: 'Lelang Lainnya'),
+              Tab(text: 'Lelang berlangsung'),
+              Tab(text: 'Lelang lainnya'),
             ],
             labelColor: Color.fromRGBO(74, 98, 138, 1),
             unselectedLabelColor: Color.fromRGBO(74, 98, 138, 0.7),
