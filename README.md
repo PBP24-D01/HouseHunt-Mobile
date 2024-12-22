@@ -2,6 +2,10 @@
 
 ## HouseHunt Mobile App
 
+[Install disini!!!](https://install.appcenter.ms/orgs/pbpd01/apps/househunt/distribution_groups/public/releases/1)
+
+[![Build status](https://build.appcenter.ms/v0.1/apps/15f089e7-bacb-4072-b5ea-0a1fc6573047/branches/main/badge)](https://appcenter.ms)
+
 ### Anggota Kelompok
 
 - Tristan Agra Yudhistira (2306245112)
