@@ -73,6 +73,7 @@ class OrderPage extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
+                    // no clue what this does aswell
                     'Harga: Rp ${house['harga'].toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                     style: TextStyle(
                       fontSize: 18,

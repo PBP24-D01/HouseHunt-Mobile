@@ -53,7 +53,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
   Future<void> markHouseAsUnavailable() async {
     final request = Provider.of<CookieRequest>(context, listen: false);
-    final response = await request.post('http://10.0.2.2:8000/api/house_delete/${widget.house.id}/', {} );
+    final response = await request.post('http://https://tristan-agra-househunt.pbp.cs.ui.ac.id/.2.2:8000/api/house_delete/${widget.house.id}/', {} );
 
     if (response['status'] == 'success') {
       setState(() {
