@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/rumah/models/house.dart';
 import 'package:househunt_mobile/module/rumah/edit_house.dart';
@@ -6,6 +7,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/rumah/order_page.dart';
 import 'package:househunt_mobile/module/auth/models/buyer.dart';
+import 'package:http/http.dart' as http;
 
 class HouseDetailsPage extends StatefulWidget {
   final House house;
@@ -47,6 +49,23 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         );
       }
     });
+  }
+
+  Future<void> markHouseAsUnavailable() async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final response = await request.post('http://10.0.2.2:8000/api/house_delete/${widget.house.id}/', {} );
+
+    if (response['status'] == 'success') {
+      setState(() {
+        widget.house.isAvailable = false;
+      });
+      Navigator.pop(context);
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to mark house as unavailable')),
+      );
+    }
   }
 
   @override
@@ -139,33 +158,34 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: isAuthenticated
-            ? (isSeller
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              EditHousePage(house: widget.house),
-                        ),
-                      );
-                    },
-                    child: const Text('Edit House'),
-                  )
-                : ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrderPage(
-                            houseId: widget.house.id,
-                            buyer: buyer!, // Pass Buyer object
+            ? Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditHousePage(house: widget.house),
                           ),
-                        ),
-                      );
-                    },
-                    child: const Text('Order House'),
-                  ))
+                        );
+                      },
+                      child: const Text('Edit House'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: markHouseAsUnavailable,
+                      child: const Text('Mark as Unavailable'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             : ElevatedButton(
                 onPressed: () {
                   Navigator.push(

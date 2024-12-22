@@ -6,7 +6,7 @@ class House {
   final String location;
   final int bedrooms;
   final int bathrooms;
-  final bool isAvailable;
+  bool isAvailable;
   final String? imageUrl;
 
   House({
