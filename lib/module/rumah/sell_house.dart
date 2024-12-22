@@ -64,7 +64,8 @@ class _CreateHousePageState extends State<CreateHousePage> {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:8000/api/houses/create/'),
+      Uri.parse(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/houses/create/'),
     );
 
     request.fields['username'] = username!;
