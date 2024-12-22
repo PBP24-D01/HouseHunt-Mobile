@@ -64,6 +64,12 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
       appBar: AppBar(
         title: const Text('Edit Wishlist'),
         backgroundColor: const Color(0xFF4A628A),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Go back to the wishlist page
+          },
+        ),
       ),
       drawer: const LeftDrawer(),
       body: Padding(
