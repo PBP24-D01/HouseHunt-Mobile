@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:househunt_mobile/module/auth/login.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
