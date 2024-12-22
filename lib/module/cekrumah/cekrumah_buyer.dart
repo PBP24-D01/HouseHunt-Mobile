@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+
+import 'CreateAppointmentPage.dart';
+import 'UpdateAppointmentPage.dart';
 
 class CekRumahBuyer extends StatefulWidget {
   const CekRumahBuyer({super.key});
@@ -20,10 +26,11 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
   }
 
   Future<void> fetchAppointments() async {
-    final request = context.read<CookieRequest>(); // Access context immediately
+    final request = context.read<CookieRequest>();
     try {
-      final response = await request.get('http://127.0.0.1:8000/cekrumah/api/appointments/');
-      if (mounted) { // Check if the widget is still mounted before updating state
+      final response = await request.get(
+          'http://127.0.0.1:8000/cekrumah/api/appointments/buyer/');
+      if (mounted) {
         setState(() {
           if (response['success']) {
             appointments = response['appointments'];
@@ -37,7 +44,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch appointments')),
+          const SnackBar(content: Text('Failed to fetch appointments')),
         );
       }
     }
@@ -45,16 +52,37 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Appointments'),
+        title: const Text('Your Appointments', style: TextStyle(color: Colors.white),),
+        backgroundColor: const Color(0xFF4A628A),
       ),
+      drawer: const LeftDrawer(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : appointments.isEmpty
-          ? const Center(
-        child: Text("You don't have any appointments"),
+          ? Center(
+        child: Column(
+          children: [const Text("You don't have any appointments"),
+            
+            ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateAppointmentPage(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4A628A),
+            ),
+            child: const Text('Request New Appointment',
+              style: TextStyle(color: Colors.white),),
+          ),
+          ]
+        )
+
       )
           : SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
@@ -69,101 +97,124 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
               ),
             ),
             const SizedBox(height: 16.0),
-            DataTable(
-              columns: const [
-                DataColumn(label: Text('House')),
-                DataColumn(label: Text('Seller')),
-                DataColumn(label: Text('Date')),
-                DataColumn(label: Text('Start Time')),
-                DataColumn(label: Text('End Time')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Notes')),
-                DataColumn(label: Text('Actions')),
-              ],
-              rows: appointments.map((appointment) {
-                final house = appointment['availability']['house'];
-                final seller = appointment['seller']['username'];
-                final date =
-                appointment['availability']['available_date'];
-                final startTime =
-                appointment['availability']['start_time'];
-                final endTime =
-                appointment['availability']['end_time'];
-                final status = appointment['status'];
-                final notes = appointment['notes_to_seller'] ?? '';
+            SingleChildScrollView(  // Added horizontal scroll
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                headingRowColor: MaterialStateColor.resolveWith(
+                      (states) => const Color(0xFF4A628A),
+                ),
+                headingTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                columns: const [
+                  DataColumn(label: Text('House')),
+                  DataColumn(label: Text('Seller')),
+                  DataColumn(label: Text('Date')),
+                  DataColumn(label: Text('Start Time')),
+                  DataColumn(label: Text('End Time')),
+                  DataColumn(label: Text('Status')),
+                  DataColumn(label: Text('Notes')),
+                  DataColumn(label: Text('Actions')),
+                ],
+                rows: appointments.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final appointment = entry.value;
+                  final house = appointment['house']['name'];
+                  final seller = appointment['seller']['username'];
+                  final date = appointment['date'];
+                  final startTime = appointment['start_time'];
+                  final endTime = appointment['end_time'];
+                  final status = appointment['status'];
+                  final notes = appointment['notes_to_seller'] ?? '';
+                  final appointmentId = appointment['id'].toString();
 
-                return DataRow(
-                  cells: [
-                    DataCell(TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HouseDetailPage(
-                              houseId: house['id'],
+                  return DataRow(
+                    color: MaterialStateColor.resolveWith(
+                          (states) => index % 2 == 0
+                          ? Colors.grey.shade200
+                          : Colors.white,
+                    ),
+                    cells: [
+                      DataCell(TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HouseDetailPage(
+                                houseId: appointment['house']['id'],
+                              ),
                             ),
+                          );
+                        },
+                        child: Text(house),
+                      )),
+                      DataCell(Text(seller)),
+                      DataCell(Text(date)),
+                      DataCell(Text(startTime)),
+                      DataCell(Text(endTime)),
+                      DataCell(
+                        Text(
+                          status,
+                          style: TextStyle(
+                            color: status == 'Approved'
+                                ? Colors.green
+                                : status == 'Canceled'
+                                ? Colors.red
+                                : Colors.orange,
                           ),
-                        );
-                      },
-                      child: Text(house['name']),
-                    )),
-                    DataCell(Text(seller)),
-                    DataCell(Text(date)),
-                    DataCell(Text(startTime)),
-                    DataCell(Text(endTime)),
-                    DataCell(
-                      Text(
-                        status,
-                        style: TextStyle(
-                          color: status == 'Approved'
-                              ? Colors.green
-                              : status == 'Canceled'
-                              ? Colors.red
-                              : Colors.orange,
                         ),
                       ),
-                    ),
-                    DataCell(Text(notes)),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      UpdateAppointmentPage(
-                                        appointmentId: appointment['id'],
-                                      ),
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () async {
-                              final response = await request.postJson(
-                                'http://127.0.0.1:8000/cekrumah/delete_appointment/${appointment['id']}', "delete"
-                              );
-                              if (response['success']) {
-                                fetchAppointments(); // Refresh data
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          response['message'])),
+                      DataCell(Text(notes)),
+                      DataCell(
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit,
+                                  color: Colors.blue),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateAppointmentPage(
+                                          appointmentId: appointmentId,
+                                          appointmentData: appointment,
+                                        ),
+                                  ),
                                 );
-                              }
-                            },
-                          ),
-                        ],
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.red),
+                              onPressed: () async {
+                                final request =
+                                context.read<CookieRequest>();
+                                final response = await request.postJson(
+                                  'http://127.0.0.1:8000/cekrumah/api/delete_appointment/${appointment['id']}/',
+                                  jsonEncode({'key': 'value'}),
+                                );
+                                if (response['success']) {
+                                  setState(() {
+                                    appointments.remove(appointment);
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            response['message'])),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }).toList(),
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
@@ -175,7 +226,11 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
                   ),
                 );
               },
-              child: const Text('Request New Appointment'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4A628A),
+              ),
+              child: const Text('Request New Appointment',
+              style: TextStyle(color: Colors.white),),
             ),
           ],
         ),
@@ -191,49 +246,13 @@ class HouseDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Implement house detail page logic
     return Scaffold(
       appBar: AppBar(
         title: const Text('House Detail'),
+        backgroundColor: const Color(0xFF4A628A),
       ),
       body: Center(
         child: Text('Details for House ID: $houseId'),
-      ),
-    );
-  }
-}
-
-class UpdateAppointmentPage extends StatelessWidget {
-  final int appointmentId;
-
-  const UpdateAppointmentPage({super.key, required this.appointmentId});
-
-  @override
-  Widget build(BuildContext context) {
-    // Implement update appointment logic
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Update Appointment'),
-      ),
-      body: Center(
-        child: Text('Update form for Appointment ID: $appointmentId'),
-      ),
-    );
-  }
-}
-
-class CreateAppointmentPage extends StatelessWidget {
-  const CreateAppointmentPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // Implement create appointment logic
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Appointment'),
-      ),
-      body: const Center(
-        child: Text('Create New Appointment Form'),
       ),
     );
   }

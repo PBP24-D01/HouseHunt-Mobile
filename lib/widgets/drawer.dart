@@ -105,7 +105,7 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const CekRumahBuyer()));
@@ -157,7 +157,7 @@ class LeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.house, color: Color(0xFF4A628A)),
                 title: const Text('Cek Rumah'),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => CekRumahSeller()));
