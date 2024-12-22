@@ -50,8 +50,8 @@ class _EditHousePageState extends State<EditHousePage> {
   }
 
   Future<void> updateHouse() async {
-    final url =
-        Uri.parse('http://127.0.0.1:8000/api/houses/${widget.house.id}/edit/');
+    final url = Uri.parse(
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/houses/${widget.house.id}/edit/');
 
     var request = http.MultipartRequest('POST', url);
 

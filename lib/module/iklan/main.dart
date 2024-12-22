@@ -242,6 +242,16 @@ class _IklanPageState extends State<IklanPage> {
         );
       },
     );
+    final response = await request
+        .get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/get-all/');
+    var data = response;
+    List<Iklan> listIklan = [];
+    for (var d in data) {
+      if (d != null) {
+        listIklan.add(Iklan.fromJson(d));
+      }
+    }
+    return listIklan;
   }
 
   @override

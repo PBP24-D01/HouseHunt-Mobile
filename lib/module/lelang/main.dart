@@ -36,8 +36,8 @@ class _AuctionPageState extends State<AuctionPage>
   }
 
   Future<List<AvailableAuction>> fetchHouses(CookieRequest request) async {
-    final response =
-        await request.get('http://127.0.0.1:8000/auction/available-houses/');
+    final response = await request.get(
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/available-houses/');
     var data = response;
     List<AvailableAuction> houses = [];
     for (var house in data) {
@@ -49,8 +49,8 @@ class _AuctionPageState extends State<AuctionPage>
   }
 
   Future<List<Auction>> fetchAuction(CookieRequest request) async {
-    final response =
-        await request.get('http://127.0.0.1:8000/auction/get-all/');
+    final response = await request
+        .get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/get-all/');
     var data = response;
     List<Auction> listAuction = [];
     for (var d in data) {
@@ -120,7 +120,7 @@ class _AuctionPageState extends State<AuctionPage>
                   ),
                   const SizedBox(height: 16.0),
                   Image.network(
-                    'http://127.0.0.1:8000/${auction.houseImage}',
+                    'https://tristan-agra-househunt.pbp.cs.ui.ac.id${auction.houseImage}',
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.contain,
@@ -267,8 +267,8 @@ class _AuctionPageState extends State<AuctionPage>
           bottom: TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(text: 'Active Auctions'),
-              Tab(text: 'Inactive Auctions'),
+              Tab(text: 'Lelang berlangsung'),
+              Tab(text: 'Lelang lainnya'),
             ],
             labelColor: Color.fromRGBO(74, 98, 138, 1),
             unselectedLabelColor: Color.fromRGBO(74, 98, 138, 0.7),

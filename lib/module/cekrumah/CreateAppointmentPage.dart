@@ -28,7 +28,8 @@ class _CreateAppointmentPageState extends State<CreateAppointmentPage> {
   Future<void> fetchHouses() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get('http://127.0.0.1:8000/cekrumah/api/buyer_houses/');
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/buyer_houses/');
       if (mounted) {
         setState(() {
           houses = response['houses'];
@@ -50,7 +51,8 @@ class _CreateAppointmentPageState extends State<CreateAppointmentPage> {
   Future<void> fetchAvailabilities(String houseId) async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get('http://127.0.0.1:8000/cekrumah/api/availabilities/$houseId/');
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/availabilities/$houseId/');
       if (mounted) {
         setState(() {
           availabilities = response['availabilities'];
@@ -74,7 +76,7 @@ class _CreateAppointmentPageState extends State<CreateAppointmentPage> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.postJson(
-        'http://127.0.0.1:8000/cekrumah/api/create_appointment/',
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/create_appointment/',
         jsonEncode({
           'availability_id': selectedAvailabilityId,
           'house_id': selectedHouseId,
@@ -107,94 +109,104 @@ class _CreateAppointmentPageState extends State<CreateAppointmentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Appointment', style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Create Appointment',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color(0xFF4A628A), // Consistent color
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select House',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedHouseId,
-              hint: const Text('Choose a house'),
-              isExpanded: true,
-              items: houses.map<DropdownMenuItem<String>>((house) {
-                return DropdownMenuItem<String>(
-                  value: house['id'].toString(),
-                  child: Text(house['judul']),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedHouseId = value;
-                  selectedAvailabilityId = null;
-                  availabilities = [];
-                });
-                if (value != null) {
-                  fetchAvailabilities(value);
-                }
-              },
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Select Availability',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedAvailabilityId,
-              hint: const Text('Choose availability'),
-              isExpanded: true,
-              items: availabilities.isEmpty
-                  ? [const DropdownMenuItem(value: null, child: Text('No availability slots'))]
-                  : availabilities.map<DropdownMenuItem<String>>((availability) {
-                return DropdownMenuItem<String>(
-                  value: availability['id'].toString(),
-                  child: Text('${availability['date']} - ${availability['start_time']} - ${availability['end_time']}'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedAvailabilityId = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Notes to Seller (Optional)',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Enter any notes...',
-                border: OutlineInputBorder(),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Select House',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedHouseId,
+                    hint: const Text('Choose a house'),
+                    isExpanded: true,
+                    items: houses.map<DropdownMenuItem<String>>((house) {
+                      return DropdownMenuItem<String>(
+                        value: house['id'].toString(),
+                        child: Text(house['judul']),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedHouseId = value;
+                        selectedAvailabilityId = null;
+                        availabilities = [];
+                      });
+                      if (value != null) {
+                        fetchAvailabilities(value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Select Availability',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedAvailabilityId,
+                    hint: const Text('Choose availability'),
+                    isExpanded: true,
+                    items: availabilities.isEmpty
+                        ? [
+                            const DropdownMenuItem(
+                                value: null,
+                                child: Text('No availability slots'))
+                          ]
+                        : availabilities
+                            .map<DropdownMenuItem<String>>((availability) {
+                            return DropdownMenuItem<String>(
+                              value: availability['id'].toString(),
+                              child: Text(
+                                  '${availability['date']} - ${availability['start_time']} - ${availability['end_time']}'),
+                            );
+                          }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedAvailabilityId = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Notes to Seller (Optional)',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Enter any notes...',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                    onChanged: (value) {
+                      notes = value;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: submitAppointment,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color(0xFF4A628A), // Consistent color
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    ),
+                    child: const Text(
+                      'Submit Appointment',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
-              maxLines: 3,
-              onChanged: (value) {
-                notes = value;
-              },
             ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: submitAppointment,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4A628A), // Consistent color
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-              ),
-              child: const Text(
-                'Submit Appointment',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

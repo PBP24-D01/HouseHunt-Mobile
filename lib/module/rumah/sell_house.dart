@@ -3,8 +3,10 @@ import 'package:househunt_mobile/module/rumah/models/house.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 
 class CreateHousePage extends StatefulWidget {
   const CreateHousePage({Key? key}) : super(key: key);
@@ -40,8 +42,8 @@ class _CreateHousePageState extends State<CreateHousePage> {
   Future<void> fetchFormOptions() async {
     final request = Provider.of<CookieRequest>(context, listen: false);
     try {
-      final response =
-          await request.get('http://127.0.0.1:8000/api/form-options/');
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/form-options/');
       setState(() {
         locations = List<String>.from(response['locations']);
         priceRanges = List<String>.from(response['price_ranges']);
@@ -57,32 +59,52 @@ class _CreateHousePageState extends State<CreateHousePage> {
 
   // form
   Future<void> createHouse() async {
-    final request = Provider.of<CookieRequest>(context, listen: false);
-    try {
-      final response = await request.post(
-        'http://127.0.0.1:8000/api/houses/create/',
-        {
-          'judul': title!,
-          'deskripsi': description!,
-          'harga': price!.toString(),
-          'lokasi': location!,
-          'kamar_tidur': bedrooms!.toString(),
-          'kamar_mandi': bathrooms!.toString(),
-          'is_available': isAvailable.toString(),
-          if (imageFile != null)
-            'gambar': base64Encode(imageFile!.readAsBytesSync()),
-        },
-      );
+    final requestCookie = Provider.of<CookieRequest>(context, listen: false);
+    final username = requestCookie.getJsonData()['username'];
 
-      if (response['id'] != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'House created successfully with ID: ${response['id']}')),
-        );
-        Navigator.pop(context);
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/houses/create/'),
+    );
+
+    request.fields['username'] = username!;
+    request.fields['judul'] = title!;
+    request.fields['deskripsi'] = description!;
+    request.fields['harga'] = price!.toString();
+    request.fields['lokasi'] = location!;
+    request.fields['kamar_tidur'] = bedrooms!.toString();
+    request.fields['kamar_mandi'] = bathrooms!.toString();
+    request.fields['is_available'] = isAvailable.toString();
+
+    if (imageFile != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'gambar',
+          imageFile!.path,
+          filename: path.basename(imageFile!.path),
+        ),
+      );
+    }
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 201) {
+        final responseBody = await response.stream.bytesToString();
+        final responseData = json.decode(responseBody);
+        if (responseData['id'] != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'House created successfully with ID: ${responseData['id']}')),
+          );
+          Navigator.pop(context);
+        } else {
+          throw Exception('Failed to create house');
+        }
       } else {
-        throw Exception('Failed to create house');
+        throw Exception('Failed to create house: ${response.statusCode}');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

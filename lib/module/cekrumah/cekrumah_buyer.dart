@@ -32,7 +32,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.get(
-          'http://127.0.0.1:8000/cekrumah/api/appointments/buyer/');
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/appointments/buyer/');
       if (mounted) {
         setState(() {
           if (response['success']) {

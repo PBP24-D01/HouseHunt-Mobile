@@ -148,6 +148,7 @@ class InvoicePage extends StatelessWidget {
                         ),
                         SizedBox(height: 5),
                         Text(
+                          // no clue what this does
                           'Rp ${totalPrice.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                           style: TextStyle(
                             fontSize: 24,
