@@ -40,8 +40,8 @@ class _CreateHousePageState extends State<CreateHousePage> {
   Future<void> fetchFormOptions() async {
     final request = Provider.of<CookieRequest>(context, listen: false);
     try {
-      final response =
-          await request.get('http://127.0.0.1:8000/api/form-options/');
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/form-options/');
       setState(() {
         locations = List<String>.from(response['locations']);
         priceRanges = List<String>.from(response['price_ranges']);
@@ -60,7 +60,7 @@ class _CreateHousePageState extends State<CreateHousePage> {
     final request = Provider.of<CookieRequest>(context, listen: false);
     try {
       final response = await request.post(
-        'http://127.0.0.1:8000/api/houses/create/',
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/houses/create/',
         {
           'judul': title!,
           'deskripsi': description!,

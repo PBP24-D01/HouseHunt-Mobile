@@ -13,7 +13,7 @@ class DiscussionPage extends StatefulWidget {
 }
 
 class _DiscussionPageState extends State<DiscussionPage> {
-    late Future<List<ShowSeller>> _sellersFuture;
+  late Future<List<ShowSeller>> _sellersFuture;
 
   @override
   void initState() {
@@ -31,8 +31,9 @@ class _DiscussionPageState extends State<DiscussionPage> {
 
   Future<List<ShowSeller>> fetchSellers(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/diskusi/show_sellers');
-      
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/diskusi/show_sellers');
+
       if (response is List) {
         // If response is already a List, convert each item to ShowSeller
         return response.map((item) => ShowSeller.fromJson(item)).toList();
@@ -44,28 +45,29 @@ class _DiscussionPageState extends State<DiscussionPage> {
     }
   }
 
-Future<Map<String, dynamic>?> getSellerById(CookieRequest request, String companyName) async {
-  try {
-    final sellers = await fetchSellers(request);
-    // Find seller with matching company name
-    final matchingSeller = sellers.firstWhere(
-      (seller) => seller.fields.companyName == companyName,
-    );
+  Future<Map<String, dynamic>?> getSellerById(
+      CookieRequest request, String companyName) async {
+    try {
+      final sellers = await fetchSellers(request);
+      // Find seller with matching company name
+      final matchingSeller = sellers.firstWhere(
+        (seller) => seller.fields.companyName == companyName,
+      );
 
-    if (matchingSeller.pk != 0) {
-      return {
-        'pk': matchingSeller.pk,
-        'id': matchingSeller.pk,
-        'company_name': matchingSeller.fields.companyName,
-      };
+      if (matchingSeller.pk != 0) {
+        return {
+          'pk': matchingSeller.pk,
+          'id': matchingSeller.pk,
+          'company_name': matchingSeller.fields.companyName,
+        };
+      }
+      ('No matching seller found for: $companyName');
+      return null;
+    } catch (e) {
+      ('Error in getSellerById: $e');
+      return null;
     }
-    ('No matching seller found for: $companyName');
-    return null;
-  } catch (e) {
-    ('Error in getSellerById: $e');
-    return null;
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -105,42 +107,43 @@ Future<Map<String, dynamic>?> getSellerById(CookieRequest request, String compan
             return Padding(
               padding: const EdgeInsets.only(bottom: 80),
               child: ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final seller = snapshot.data![index];
-                return SellerCard(
-                  name: seller.fields.companyName,
-                  rating: seller.fields.stars.toString(),
-                  sellerId: seller.pk,
-                );
-              },
-            ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final seller = snapshot.data![index];
+                  return SellerCard(
+                    name: seller.fields.companyName,
+                    rating: seller.fields.stars.toString(),
+                    sellerId: seller.pk,
+                  );
+                },
+              ),
             );
           }
         },
       ),
-      floatingActionButton: (!request.jsonData['is_buyer'] && request.loggedIn) 
-      ? FloatingActionButton(
-          onPressed: () async {
-            final seller = await getSellerById(request, request.jsonData['company_name']);
-            (seller);
-            if (seller != null) {
-            (seller['pk']);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CommentPage(
-                    id: seller['id'],
-                    companyName: request.jsonData['company_name'],
-                  ),
-                ),
-              ).then((_) => _refreshSellers());
-            }
-          },
-          child: const Icon(Icons.rate_review),
-          backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
-        )
-      : null,
+      floatingActionButton: (!request.jsonData['is_buyer'] && request.loggedIn)
+          ? FloatingActionButton(
+              onPressed: () async {
+                final seller = await getSellerById(
+                    request, request.jsonData['company_name']);
+                (seller);
+                if (seller != null) {
+                  (seller['pk']);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CommentPage(
+                        id: seller['id'],
+                        companyName: request.jsonData['company_name'],
+                      ),
+                    ),
+                  ).then((_) => _refreshSellers());
+                }
+              },
+              child: const Icon(Icons.rate_review),
+              backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+            )
+          : null,
     );
   }
 }
@@ -175,14 +178,16 @@ class SellerCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     Text(
                       rating,
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style:
+                          const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
                     const SizedBox(width: 4),
                     Icon(Icons.star, color: Colors.yellow[600], size: 16),
@@ -193,12 +198,13 @@ class SellerCard extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CommentPage(id: sellerId,companyName: name),
-                  )
-                ).then((_) {
-                  final state = context.findAncestorStateOfType<_DiscussionPageState>();
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CommentPage(id: sellerId, companyName: name),
+                    )).then((_) {
+                  final state =
+                      context.findAncestorStateOfType<_DiscussionPageState>();
                   state?._refreshSellers();
                 });
               },

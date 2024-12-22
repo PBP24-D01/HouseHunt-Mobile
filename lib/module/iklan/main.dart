@@ -14,7 +14,8 @@ class IklanPage extends StatefulWidget {
 
 class _IklanPageState extends State<IklanPage> {
   Future<List<Iklan>> fetchIklan(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/iklan/get-all/');
+    final response = await request
+        .get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/get-all/');
     var data = response;
     List<Iklan> listIklan = [];
     for (var d in data) {

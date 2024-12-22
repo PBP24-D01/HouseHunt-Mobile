@@ -26,7 +26,7 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
 
   Future<void> _saveWishlist(CookieRequest request) async {
     final url =
-        'http://127.0.0.1:8000/wishlist/edit-flutter/${widget.wishlist.rumahId}/';
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/edit-flutter/${widget.wishlist.rumahId}/';
     final response = await request.post(url, {
       'priority': priority,
       'notes': notes,
@@ -151,9 +151,11 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
                   Expanded(
                     child: Row(
                       children: [
-                        _buildIconText(Icons.bed, "${widget.wishlist.kamarTidur}"),
+                        _buildIconText(
+                            Icons.bed, "${widget.wishlist.kamarTidur}"),
                         const SizedBox(width: 8),
-                        _buildIconText(Icons.bathtub, "${widget.wishlist.kamarMandi}"),
+                        _buildIconText(
+                            Icons.bathtub, "${widget.wishlist.kamarMandi}"),
                       ],
                     ),
                   ),
@@ -181,10 +183,12 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
                   ),
                   Expanded(
                     child: Text(
-                      widget.wishlist.catatan != null && widget.wishlist.catatan!.isNotEmpty
+                      widget.wishlist.catatan != null &&
+                              widget.wishlist.catatan!.isNotEmpty
                           ? widget.wishlist.catatan!
                           : 'No notes',
-                      style: const TextStyle(fontSize: 12, color: Colors.black45),
+                      style:
+                          const TextStyle(fontSize: 12, color: Colors.black45),
                       textAlign: TextAlign.right,
                     ),
                   ),

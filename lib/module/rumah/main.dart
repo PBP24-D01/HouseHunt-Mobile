@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchFilterOptions() async {
     final response =
         // change before deployment
-        await http.get(Uri.parse('http://127.0.0.1:8000/api/filter-options/'));
+        await http.get(Uri.parse(
+            'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/filter-options/'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage> {
       'is_available': 'on',
     };
     // change before deployment
-    final uri = Uri.http('127.0.0.1:8000', '/api/houses/', queryParameters);
+    final uri = Uri.https('tristan-agra-househunt.pbp.cs.ui.ac.id', '/api/houses/', queryParameters);
 
     final response = await http.get(uri);
 
@@ -190,7 +191,9 @@ class _HomePageState extends State<HomePage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const LeftDrawer(),
-      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: isAuthenticated ? 2 : 1,),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: isAuthenticated ? 2 : 1,
+      ),
       body: Column(
         children: [
           // **Filter Section**

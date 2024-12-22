@@ -280,8 +280,8 @@ class _AuctionFormPageState extends State<AuctionFormPage> {
                           if (_formKey.currentState!.validate()) {
                             final response = await request.postJson(
                               widget.isEdit
-                                  ? "http://127.0.0.1:8000/auction/edit/api/${widget.id}/"
-                                  : "http://127.0.0.1:8000/auction/create/api/",
+                                  ? "https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/edit/api/${widget.id}/"
+                                  : "https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/create/api/",
                               jsonEncode({
                                 "title": _title,
                                 "house": _houseId,
