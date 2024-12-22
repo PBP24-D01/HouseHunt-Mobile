@@ -91,7 +91,13 @@ class _WishlistPageState extends State<WishlistPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wishlist'),
+        title: const Text(
+          'Wishlist',
+          style: TextStyle(
+            color: Colors.white, // Change the title text color to white
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
