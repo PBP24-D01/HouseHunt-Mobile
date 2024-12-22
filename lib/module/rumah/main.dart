@@ -88,7 +88,10 @@ class _HomePageState extends State<HomePage> {
     final request = context.read<CookieRequest>();
     if (!request.loggedIn) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in to manage your wishlist.')),
+        const SnackBar(
+          content: Text('Please log in to manage your wishlist.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -116,24 +119,34 @@ class _HomePageState extends State<HomePage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'])),
+          SnackBar(
+            content: Text(response['message']),
+            backgroundColor: Colors.green,
+          ),
         );
       } else if (response['status'] == 'unauthorized') {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Only buyers can access this feature.')),
+          const SnackBar(
+            content: Text('Only buyers can access this feature.'),
+            backgroundColor: Colors.red,
+          ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(response['message'] ?? 'Failed to update wishlist')),
+            content: Text(response['message'] ?? 'Failed to update wishlist'),
+            backgroundColor: Colors.red,
+          ),
         );
         // Refresh wishlist to ensure UI is in sync with server
         await fetchWishlist();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating wishlist: $e')),
+        SnackBar(
+          content: Text('Error updating wishlist: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
       // Refresh wishlist to ensure UI is in sync with server
       await fetchWishlist();
@@ -168,7 +181,10 @@ class _HomePageState extends State<HomePage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching wishlist: $e')),
+        SnackBar(
+          content: Text('Error fetching wishlist: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

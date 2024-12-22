@@ -35,7 +35,7 @@ class WishlistCard extends StatelessWidget {
                 'https://tristan-agra-househunt.pbp.cs.ui.ac.id${wishlist.gambar}',
                 height: 150,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) => const Icon(
                   Icons.image_not_supported,
                   size: 150,
@@ -74,7 +74,7 @@ class WishlistCard extends StatelessWidget {
 
             // Price
             Text(
-              "Rp${wishlist.harga}",
+              "Rp ${wishlist.harga.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00",
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -132,8 +132,8 @@ class WishlistCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     wishlist.catatan != null && wishlist.catatan!.isNotEmpty
-                      ? wishlist.catatan!
-                      : 'No notes',
+                        ? wishlist.catatan!
+                        : 'No notes',
                     style: const TextStyle(fontSize: 12, color: Colors.black45),
                     textAlign: TextAlign.right,
                   ),
@@ -164,7 +164,8 @@ class WishlistCard extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Confirm Delete'),
-                        content: const Text('Are you sure you want to delete this item from your wishlist?'),
+                        content: const Text(
+                            'Are you sure you want to delete this item from your wishlist?'),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
@@ -173,7 +174,7 @@ class WishlistCard extends StatelessWidget {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                              onDelete(); 
+                              onDelete();
                             },
                             child: const Text('Delete'),
                           ),

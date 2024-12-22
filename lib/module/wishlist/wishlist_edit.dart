@@ -40,18 +40,27 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Wishlist updated successfully.')),
+          const SnackBar(
+            content: Text('Wishlist updated successfully.'),
+            backgroundColor: Colors.green,
+          ),
         );
 
         Navigator.pop(context, true); // Signal success to the previous page
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating wishlist: $error')),
+          SnackBar(
+            content: Text('Error updating wishlist: $error'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${response['message']}')),
+        SnackBar(
+          content: Text('Error: ${response['message']}'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
