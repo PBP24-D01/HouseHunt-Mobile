@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:househunt_mobile/widgets/drawer.dart';
+import 'package:househunt_mobile/module/rumah/house_details.dart';
+import 'package:househunt_mobile/module/rumah/models/house.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,11 +13,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List houses = [];
+  List<House> houses = [];
   List<String> locations = [];
   List<String> priceRanges = [];
-  List<String> bedrooms = [];
-  List<String> bathrooms = [];
+  List<String> bedroomOptions = [];
+  List<String> bathroomOptions = [];
   String? selectedLocation;
   String? selectedPriceRange;
   String? selectedBedrooms;
@@ -38,8 +40,8 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         locations = List<String>.from(data['locations']);
         priceRanges = List<String>.from(data['price_ranges']);
-        bedrooms = List<String>.from(data['bedrooms']);
-        bathrooms = List<String>.from(data['bathrooms']);
+        bedroomOptions = List<String>.from(data['bedrooms']);
+        bathroomOptions = List<String>.from(data['bathrooms']);
       });
     } else {
       throw Exception('Failed to load filter options');
@@ -64,8 +66,9 @@ class _HomePageState extends State<HomePage> {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
+      final List<dynamic> jsonData = json.decode(response.body);
       setState(() {
-        houses = json.decode(response.body);
+        houses = jsonData.map((data) => House.fromJson(data)).toList();
       });
     } else {
       throw Exception('Failed to load houses');
@@ -89,102 +92,96 @@ class _HomePageState extends State<HomePage> {
       drawer: const LeftDrawer(),
       body: Column(
         children: [
+          // **Filter Section**
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Filter Houses',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
+                // **Location Filter**
                 DropdownButtonFormField<String>(
-                  value: selectedLocation,
-                  hint: const Text('Select Location'),
+                  decoration: const InputDecoration(
+                    labelText: 'Location',
+                    border: OutlineInputBorder(),
+                  ),
                   items: locations.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
                   }).toList(),
+                  value: selectedLocation,
                   onChanged: (newValue) {
                     setState(() {
                       selectedLocation = newValue;
                     });
                   },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  ),
                 ),
                 const SizedBox(height: 10),
+                // **Price Range Filter**
                 DropdownButtonFormField<String>(
-                  value: selectedPriceRange,
-                  hint: const Text('Select Price Range'),
+                  decoration: const InputDecoration(
+                    labelText: 'Price Range',
+                    border: OutlineInputBorder(),
+                  ),
                   items: priceRanges.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
                   }).toList(),
+                  value: selectedPriceRange,
                   onChanged: (newValue) {
                     setState(() {
                       selectedPriceRange = newValue;
                     });
                   },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  ),
                 ),
                 const SizedBox(height: 10),
+                // **Bedrooms Filter**
                 DropdownButtonFormField<String>(
-                  value: selectedBedrooms,
-                  hint: const Text('Select Bedrooms'),
-                  items: bedrooms.map((String value) {
+                  decoration: const InputDecoration(
+                    labelText: 'Bedrooms',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: bedroomOptions.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
                   }).toList(),
+                  value: selectedBedrooms,
                   onChanged: (newValue) {
                     setState(() {
                       selectedBedrooms = newValue;
                     });
                   },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  ),
                 ),
                 const SizedBox(height: 10),
+                // **Bathrooms Filter**
                 DropdownButtonFormField<String>(
-                  value: selectedBathrooms,
-                  hint: const Text('Select Bathrooms'),
-                  items: bathrooms.map((String value) {
+                  decoration: const InputDecoration(
+                    labelText: 'Bathrooms',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: bathroomOptions.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
                   }).toList(),
+                  value: selectedBathrooms,
                   onChanged: (newValue) {
                     setState(() {
                       selectedBathrooms = newValue;
                     });
                   },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  ),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: fetchHouses,
-                  child: const Text('Cari Rumah'),
+                  onPressed: () {
+                    fetchHouses();
+                  },
+                  child: const Text('Apply Filters'),
                 ),
               ],
             ),
@@ -213,7 +210,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HouseCard extends StatelessWidget {
-  final Map house;
+  final House house;
 
   const HouseCard({required this.house});
 
@@ -224,21 +221,27 @@ class HouseCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 16),
           // Display the house image
-          Image.network(
-            house['gambar'] ?? 'https://via.placeholder.com/150',
-            width: double.infinity,
-            height: 200,
-            fit: BoxFit.contain,
-          ),
+          house.imageUrl != null
+              ? Image.network(
+                  house.imageUrl!,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  'https://via.placeholder.com/150',
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  house['judul'] ?? 'No Title',
+                  house.title,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -246,7 +249,7 @@ class HouseCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  house['lokasi'] ?? 'No Location',
+                  house.location,
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -254,7 +257,7 @@ class HouseCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  'Rp ${house['harga']?.toString() ?? '0'}',
+                  'Rp ${house.price}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -269,17 +272,31 @@ class HouseCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.bed),
                         const SizedBox(width: 5),
-                        Text('${house['kamar_tidur'] ?? '0'} Bedrooms'),
+                        Text('${house.bedrooms} Bedrooms'),
                       ],
                     ),
                     Row(
                       children: [
                         const Icon(Icons.bathtub),
                         const SizedBox(width: 5),
-                        Text('${house['kamar_mandi'] ?? '0'} Bathrooms'),
+                        Text('${house.bathrooms} Bathrooms'),
                       ],
                     ),
                   ],
+                ),
+                const SizedBox(height: 10),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HouseDetailsPage(house: house),
+                        ),
+                      );
+                    },
+                    child: const Text('View Details'),
+                  ),
                 ),
               ],
             ),
