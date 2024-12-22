@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/iklan/models/iklan.dart';
-import 'package:househunt_mobile/module/rumah/models/house.dart';
-import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 
 class IklanPage extends StatefulWidget {
@@ -27,7 +23,7 @@ class _IklanPageState extends State<IklanPage> {
 
   Future<void> fetchHouseNames(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/iklan/create/');
+      final response = await request.get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/create/');
       print(response);
       if (response['houses'] != null) {
         _houseList = (response['houses'] as List)
@@ -44,7 +40,7 @@ class _IklanPageState extends State<IklanPage> {
   }
 
   Future<List<Iklan>> fetchIklan(CookieRequest request) async {
-    final response2 = await request.get('http://127.0.0.1:8000/iklan/json/');
+    final response2 = await request.get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/json/');
     List<Iklan> iklanList = (response2['iklan'] as List)
         .map((iklanData) => Iklan.fromJson(iklanData))
         .toList();
@@ -53,7 +49,7 @@ class _IklanPageState extends State<IklanPage> {
 
   Future<void> createIklan(CookieRequest request, Iklan iklan) async {
     final response = await request.post(
-      'http://127.0.0.1:8000/iklan/create/',
+      'https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/create/',
       iklan.toJson(),
     );
     if (response.statusCode != 200) {
@@ -63,7 +59,7 @@ class _IklanPageState extends State<IklanPage> {
 
   Future<void> updateIklan(CookieRequest request, Iklan iklan) async {
     final response = await request.post(
-      'http://127.0.0.1:8000/iklan/edit/${iklan.id}/',
+      'https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/edit/${iklan.id}/',
       iklan.toJson(),
     );
     if (response.statusCode != 200) {
@@ -73,7 +69,7 @@ class _IklanPageState extends State<IklanPage> {
 
   Future<void> deleteIklan(CookieRequest request, String id) async {
     final response = await request.post(
-        'http://127.0.0.1:8000/iklan/delete/$id/', // Ensure this endpoint is correct for deletions
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/iklan/delete/$id/', // Ensure this endpoint is correct for deletions
         {} // Pass an empty body if the API does not require any data
         );
     if (response.statusCode != 200) {
