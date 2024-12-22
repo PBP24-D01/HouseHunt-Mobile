@@ -3,6 +3,7 @@ import 'package:househunt_mobile/module/lelang/models/auction.dart';
 import 'package:househunt_mobile/module/lelang/models/available_auction.dart';
 import 'package:househunt_mobile/module/lelang/screens/detail.dart';
 import 'package:househunt_mobile/module/lelang/screens/lelang_form.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -276,6 +277,7 @@ class _AuctionPageState extends State<AuctionPage>
           ),
         ),
         drawer: const LeftDrawer(),
+        bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 0),
         floatingActionButton: !isBuyer
             ? FutureBuilder<List<AvailableAuction>>(
                 future: _availableAuctionFuture,

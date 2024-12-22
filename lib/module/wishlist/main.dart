@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
 import 'package:househunt_mobile/module/wishlist/wishlist_edit.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -101,6 +102,7 @@ class _WishlistPageState extends State<WishlistPage> {
         backgroundColor: Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 3),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

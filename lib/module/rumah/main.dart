@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:househunt_mobile/module/rumah/house_details.dart';
 import 'package:househunt_mobile/module/rumah/models/house.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -77,6 +80,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = Provider.of<CookieRequest>(context);
+
+    bool isAuthenticated = request.loggedIn;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -90,6 +96,7 @@ class _HomePageState extends State<HomePage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: isAuthenticated ? 2 : 1,),
       body: Column(
         children: [
           // **Filter Section**

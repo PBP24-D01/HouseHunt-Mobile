@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
         backgroundColor: const Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 4),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : appointments.isEmpty

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:househunt_mobile/module/diskusi/comment.dart';
@@ -82,6 +83,7 @@ Future<Map<String, dynamic>?> getSellerById(CookieRequest request, String compan
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 1),
       body: FutureBuilder<List<ShowSeller>>(
         future: _sellersFuture,
         builder: (context, snapshot) {
