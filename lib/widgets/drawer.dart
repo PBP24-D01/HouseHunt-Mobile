@@ -189,7 +189,8 @@ class LeftDrawer extends StatelessWidget {
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
               onTap: () async {
-                await request.logout("http://127.0.0.1:8000/logout/flutter/");
+                await request.logout(
+                    "https://tristan-agra-househunt.pbp.cs.ui.ac.id/logout/flutter/");
                 if (!request.loggedIn && context.mounted) {
                   Navigator.pushReplacement(
                     context,

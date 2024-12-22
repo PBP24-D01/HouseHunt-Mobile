@@ -8,7 +8,8 @@ class UpdateAppointmentPage extends StatefulWidget {
   final String appointmentId;
   final Map<String, dynamic> appointmentData;
 
-  const UpdateAppointmentPage({super.key, required this.appointmentId, required this.appointmentData});
+  const UpdateAppointmentPage(
+      {super.key, required this.appointmentId, required this.appointmentData});
 
   @override
   State<UpdateAppointmentPage> createState() => _UpdateAppointmentPageState();
@@ -36,7 +37,8 @@ class _UpdateAppointmentPageState extends State<UpdateAppointmentPage> {
   Future<void> fetchHouses() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get('http://127.0.0.1:8000/cekrumah/api/buyer_houses/');
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/buyer_houses/');
       if (mounted) {
         setState(() {
           houses = response['houses'];
@@ -58,7 +60,8 @@ class _UpdateAppointmentPageState extends State<UpdateAppointmentPage> {
   Future<void> fetchAvailabilities(String houseId) async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get('http://127.0.0.1:8000/cekrumah/api/availabilities/$houseId/');
+      final response = await request.get(
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/availabilities/$houseId/');
       if (mounted) {
         setState(() {
           availabilities = response['availabilities'];
@@ -82,7 +85,7 @@ class _UpdateAppointmentPageState extends State<UpdateAppointmentPage> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.postJson(
-        'http://127.0.0.1:8000/cekrumah/api/update_appointment/${widget.appointmentId}/',
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/update_appointment/${widget.appointmentId}/',
         jsonEncode({
           'appointment_id': widget.appointmentId,
           'availability_id': selectedAvailabilityId,
@@ -118,93 +121,105 @@ class _UpdateAppointmentPageState extends State<UpdateAppointmentPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Appointment', style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Update Appointment',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: primaryColor,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select House',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedHouseId,
-              hint: const Text('Choose a house'),
-              isExpanded: true,
-              style: const TextStyle(color: primaryColor),
-              items: houses.map<DropdownMenuItem<String>>((house) {
-                return DropdownMenuItem<String>(
-                  value: house['id'].toString(),
-                  child: Text("${house['id']}. ${house['judul']} "),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedHouseId = value;
-                  selectedAvailabilityId = null;
-                  availabilities = [];
-                });
-                if (value != null) {
-                  fetchAvailabilities(value);
-                }
-              },
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Select Availability',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedAvailabilityId,
-              hint: const Text('Choose availability'),
-              isExpanded: true,
-              style: const TextStyle(color: primaryColor),
-              items: availabilities.isEmpty
-                  ? [const DropdownMenuItem(value: null, child: Text('No availability slots'))]
-                  : availabilities.map<DropdownMenuItem<String>>((availability) {
-                return DropdownMenuItem<String>(
-                  value: availability['id'].toString(),
-                  child: Text('${availability['date']} - ${availability['start_time']} - ${availability['end_time']}'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedAvailabilityId = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Notes to Seller (Optional)',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Enter any notes...',
-                border: OutlineInputBorder(),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Select House',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedHouseId,
+                    hint: const Text('Choose a house'),
+                    isExpanded: true,
+                    style: const TextStyle(color: primaryColor),
+                    items: houses.map<DropdownMenuItem<String>>((house) {
+                      return DropdownMenuItem<String>(
+                        value: house['id'].toString(),
+                        child: Text("${house['id']}. ${house['judul']} "),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedHouseId = value;
+                        selectedAvailabilityId = null;
+                        availabilities = [];
+                      });
+                      if (value != null) {
+                        fetchAvailabilities(value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Select Availability',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedAvailabilityId,
+                    hint: const Text('Choose availability'),
+                    isExpanded: true,
+                    style: const TextStyle(color: primaryColor),
+                    items: availabilities.isEmpty
+                        ? [
+                            const DropdownMenuItem(
+                                value: null,
+                                child: Text('No availability slots'))
+                          ]
+                        : availabilities
+                            .map<DropdownMenuItem<String>>((availability) {
+                            return DropdownMenuItem<String>(
+                              value: availability['id'].toString(),
+                              child: Text(
+                                  '${availability['date']} - ${availability['start_time']} - ${availability['end_time']}'),
+                            );
+                          }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedAvailabilityId = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Notes to Seller (Optional)',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Enter any notes...',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                    controller: notesController,
+                    onChanged: (value) {
+                      notes = value;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                    ),
+                    onPressed: updateAppointment,
+                    child: const Text(
+                      'Update Appointment',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
-              maxLines: 3,
-              controller: notesController,
-              onChanged: (value) {
-                notes = value;
-              },
             ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-              ),
-              onPressed: updateAppointment,
-              child: const Text('Update Appointment', style: TextStyle(color: Colors.white),),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
