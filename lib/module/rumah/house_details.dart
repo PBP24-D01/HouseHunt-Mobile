@@ -4,6 +4,8 @@ import 'package:househunt_mobile/module/rumah/edit_house.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:househunt_mobile/module/rumah/order_page.dart';
+import 'package:househunt_mobile/module/auth/models/buyer.dart';
 
 class HouseDetailsPage extends StatefulWidget {
   final House house;
@@ -18,6 +20,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   bool isSeller = false;
   bool isBuyer = false;
   bool isAuthenticated = false;
+  Buyer? buyer;
 
   @override
   void initState() {
@@ -32,6 +35,17 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       isAuthenticated = request.loggedIn;
       isBuyer = request.jsonData['is_buyer'] ?? false;
       isSeller = !isBuyer;
+
+      if (isBuyer) {
+        buyer = Buyer(
+          id: request.jsonData['id'],
+          username: request.jsonData['username'],
+          email: request.jsonData['email'],
+          phoneNumber: request.jsonData['phone_number'],
+          isBuyer: request.jsonData['is_buyer'],
+          preferredPaymentMethod: request.jsonData['preferred_payment_method'],
+        );
+      }
     });
   }
 
@@ -140,9 +154,17 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   )
                 : ElevatedButton(
                     onPressed: () {
-                      // buy
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderPage(
+                            houseId: widget.house.id,
+                            buyer: buyer!, // Pass Buyer object
+                          ),
+                        ),
+                      );
                     },
-                    child: const Text('Buy House'),
+                    child: const Text('Order House'),
                   ))
             : ElevatedButton(
                 onPressed: () {
@@ -153,7 +175,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                     ),
                   );
                 },
-                child: const Text('Buy House'),
+                child: const Text('Order House'),
               ),
       ),
     );
