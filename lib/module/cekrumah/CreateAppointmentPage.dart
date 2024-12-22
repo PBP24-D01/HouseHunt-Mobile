@@ -111,9 +111,14 @@ class _CreateAppointmentPageState extends State<CreateAppointmentPage> {
       appBar: AppBar(
         title: const Text(
           'Create Appointment',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: const Color(0xFF4A628A), // Consistent color
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor: Color.fromRGBO(74, 98, 138, 1), // Consistent color
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

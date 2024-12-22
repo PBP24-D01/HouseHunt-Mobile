@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:househunt_mobile/module/rumah/models/house.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';

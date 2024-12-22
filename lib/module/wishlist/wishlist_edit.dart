@@ -62,8 +62,16 @@ class _EditWishlistPageState extends State<EditWishlistPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Wishlist'),
-        backgroundColor: const Color(0xFF4A628A),
+        title: const Text(
+          'Edit Wishlist',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor: Color.fromRGBO(74, 98, 138, 1),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

@@ -204,7 +204,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                 ),
                                 const SizedBox(height: 16.0),
                                 Image.network(
-                                  'https://tristan-agra-househunt.pbp.cs.ui.ac.id/${auction.houseImage}',
+                                  'https://tristan-agra-househunt.pbp.cs.ui.ac.id${auction.houseImage}',
                                   width: double.infinity,
                                   height: 150,
                                   fit: BoxFit.contain,

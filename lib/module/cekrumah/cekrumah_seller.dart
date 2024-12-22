@@ -61,9 +61,15 @@ class _CekRumahSellerState extends State<CekRumahSeller> {
       appBar: AppBar(
         title: Text(
           'Cek Rumah Seller',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: Color(0xFF4A628A), // Primary color applied
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor:
+            Color.fromRGBO(74, 98, 138, 1), // Primary color applied
       ),
       drawer: const LeftDrawer(),
       bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 4),

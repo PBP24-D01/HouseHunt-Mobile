@@ -173,7 +173,7 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.add),
+                leading: const Icon(Icons.add, color: Color(0xFF4A628A)),
                 title: const Text('Sell House'),
                 onTap: () {
                   Navigator.push(
@@ -185,6 +185,12 @@ class LeftDrawer extends StatelessWidget {
                 },
               ),
             ],
+            const Divider(
+              color: Colors.grey,
+              thickness: 1.0,
+              indent: 8.0,
+              endIndent: 8.0,
+            ),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
@@ -197,7 +203,10 @@ class LeftDrawer extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => const LoginPage()),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Berhasil logout!")),
+                    const SnackBar(
+                      content: Text("Berhasil logout!"),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 }
               },

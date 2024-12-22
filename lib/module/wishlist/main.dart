@@ -98,11 +98,13 @@ class _WishlistPageState extends State<WishlistPage> {
         title: const Text(
           'Wishlist',
           style: TextStyle(
-            color: Colors.white, // Change the title text color to white
+            color: Colors.black, // Change the title text color to white
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF4A628A),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor: Color.fromRGBO(74, 98, 138, 1),
       ),
       drawer: const LeftDrawer(),
       bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 3),

@@ -123,9 +123,14 @@ class _UpdateAppointmentPageState extends State<UpdateAppointmentPage> {
       appBar: AppBar(
         title: const Text(
           'Update Appointment',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor: Color.fromRGBO(74, 98, 138, 1),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

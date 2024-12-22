@@ -77,12 +77,13 @@ class _DiscussionPageState extends State<DiscussionPage> {
         title: const Text(
           'Discussion',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor: Color.fromRGBO(74, 98, 138, 1),
       ),
       drawer: const LeftDrawer(),
       bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 1),

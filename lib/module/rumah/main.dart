@@ -67,7 +67,8 @@ class _HomePageState extends State<HomePage> {
       'is_available': 'on',
     };
     // change before deployment
-    final uri = Uri.https('tristan-agra-househunt.pbp.cs.ui.ac.id', '/api/houses/', queryParameters);
+    final uri = Uri.https('tristan-agra-househunt.pbp.cs.ui.ac.id',
+        '/api/houses/', queryParameters);
 
     final response = await http.get(uri);
 
@@ -99,8 +100,9 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      final url = 'https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/add-flutter/$houseId/';
-      
+      final url =
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/add-flutter/$houseId/';
+
       final response = await request.post(url, {});
 
       if (response['status'] == 'success') {
@@ -112,7 +114,7 @@ class _HomePageState extends State<HomePage> {
             wishlistIds.add(houseId);
           }
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(response['message'])),
         );
@@ -122,7 +124,9 @@ class _HomePageState extends State<HomePage> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'] ?? 'Failed to update wishlist')),
+          SnackBar(
+              content:
+                  Text(response['message'] ?? 'Failed to update wishlist')),
         );
         // Refresh wishlist to ensure UI is in sync with server
         await fetchWishlist();
@@ -150,19 +154,18 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
-      final response = await request.get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/json/');
+      final response = await request
+          .get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/json/');
       // The response here is a Map<dynamic, dynamic>
 
       // 1. Verify the JSON keys you’re expecting
       if (response.containsKey('wishlists')) {
         final wishlistData = response['wishlists'] as List;
         setState(() {
-          wishlistIds = wishlistData
-              .map<int>((item) => item['rumah_id'] as int)
-              .toList();
+          wishlistIds =
+              wishlistData.map<int>((item) => item['rumah_id'] as int).toList();
         });
       }
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching wishlist: $e')),
@@ -170,38 +173,63 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final request = Provider.of<CookieRequest>(context);
-
-    bool isAuthenticated = request.loggedIn;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'HouseHunt',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+  void _showFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
-        ),
-        backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      drawer: const LeftDrawer(),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: isAuthenticated ? 2 : 1,
-      ),
-      body: Column(
-        children: [
-          // **Filter Section**
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          content: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // **Location Filter**
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Filter',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        minimumSize: const Size(100, 50),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedLocation = null;
+                          selectedPriceRange = null;
+                          selectedBedrooms = null;
+                          selectedBathrooms = null;
+                        });
+                        fetchHouses();
+                      },
+                      child: const Text(
+                        'Reset',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
-                    labelText: 'Location',
+                    labelText: 'Lokasi',
                     border: OutlineInputBorder(),
                   ),
                   items: locations.map((String value) {
@@ -217,11 +245,11 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-                const SizedBox(height: 10),
-                // **Price Range Filter**
+
+                const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
-                    labelText: 'Price Range',
+                    labelText: 'Harga',
                     border: OutlineInputBorder(),
                   ),
                   items: priceRanges.map((String value) {
@@ -237,11 +265,13 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-                const SizedBox(height: 10),
-                // **Bedrooms Filter**
+
+                const SizedBox(height: 8),
+                // Row 2: Bedrooms and Bathrooms
+
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
-                    labelText: 'Bedrooms',
+                    labelText: 'Kamar',
                     border: OutlineInputBorder(),
                   ),
                   items: bedroomOptions.map((String value) {
@@ -257,11 +287,11 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-                const SizedBox(height: 10),
-                // **Bathrooms Filter**
+
+                const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
-                    labelText: 'Bathrooms',
+                    labelText: 'Kamar mandi',
                     border: OutlineInputBorder(),
                   ),
                   items: bathroomOptions.map((String value) {
@@ -277,25 +307,87 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-                const SizedBox(height: 10),
+
+                const SizedBox(height: 20),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
                   onPressed: () {
                     fetchHouses();
+                    Navigator.of(context).pop(); // Close the dialog
                   },
-                  child: const Text('Apply Filters'),
+                  child: const Text(
+                    'Cari Rumah',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final request = Provider.of<CookieRequest>(context);
+
+    bool isAuthenticated = request.loggedIn;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'HouseHunt',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        foregroundColor: Color.fromRGBO(74, 98, 138, 1),
+      ),
+      drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: isAuthenticated ? 2 : 1,
+      ),
+      body: Column(
+        children: [
+          // **Filter Section**
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  onPressed: () {
+                    _showFilterDialog(context);
+                  },
+                  child: const Text('Filter Rumah'),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Available Houses',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: houses.length,
@@ -332,6 +424,10 @@ class HouseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,13 +438,13 @@ class HouseCard extends StatelessWidget {
                   house.imageUrl!,
                   width: double.infinity,
                   height: 200,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 )
               : Image.network(
                   'https://via.placeholder.com/150',
                   width: double.infinity,
                   height: 200,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -390,7 +486,7 @@ class HouseCard extends StatelessWidget {
 
                 // Price
                 Text(
-                  'Rp ${house.price}',
+                  'Rp ${house.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -424,6 +520,15 @@ class HouseCard extends StatelessWidget {
                 // View Details Button
                 Center(
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: const Color.fromRGBO(74, 98, 138, 1),
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -432,7 +537,14 @@ class HouseCard extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('View Details'),
+                    child: const Text(
+                      'Detail',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],

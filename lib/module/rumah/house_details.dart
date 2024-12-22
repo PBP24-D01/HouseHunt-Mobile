@@ -1,13 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/rumah/models/house.dart';
 import 'package:househunt_mobile/module/rumah/edit_house.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:househunt_mobile/module/rumah/order_page.dart';
 import 'package:househunt_mobile/module/auth/models/buyer.dart';
-import 'package:http/http.dart' as http;
 
 class HouseDetailsPage extends StatefulWidget {
   final House house;
@@ -118,7 +115,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Rp ${widget.house.price}',
+              'Rp ${widget.house.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')},00',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -178,10 +175,10 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: markHouseAsUnavailable,
-                      child: const Text('Mark as Unavailable'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                       ),
+                      child: const Text('Mark as Unavailable'),
                     ),
                   ),
                 ],
