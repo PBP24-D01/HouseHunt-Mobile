@@ -184,7 +184,18 @@ Future<void> submitComment() async {
                       ],
                     ),
                   ),
-
+                                  // Comments List or No Comments Message
+                if (comments.isEmpty)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Belum ada review pada toko ini',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ),
+                  )
+                else
                   // Comments List
                   ListView.builder(
                     shrinkWrap: true,

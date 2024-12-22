@@ -90,7 +90,15 @@ Future<Map<String, dynamic>?> getSellerById(CookieRequest request, String compan
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No sellers available'));
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Belum ada seller terdaftar',
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              ),
+            );
           } else {
             return Padding(
               padding: const EdgeInsets.only(bottom: 80),
