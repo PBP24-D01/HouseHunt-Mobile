@@ -104,15 +104,34 @@ class _WishlistPageState extends State<WishlistPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Filter Title
+            const Text(
+              'Filter by Priority',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+
             // Filter Dropdown
-            DropdownButton<String>(
+            DropdownButtonFormField<String>(
               value: selectedPriority,
               onChanged: (String? newValue) {
                 setState(() {
                   selectedPriority = newValue!;
                 });
               },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                hintText: 'Select Priority',
+              ),
               items: priorityOptions.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -121,6 +140,8 @@ class _WishlistPageState extends State<WishlistPage> {
               }).toList(),
             ),
             const SizedBox(height: 16),
+
+            // Wishlist Items
             Expanded(
               child: FutureBuilder<List<Wishlist>>(
                 future: fetchWishlist(request),
@@ -194,7 +215,7 @@ class _WishlistPageState extends State<WishlistPage> {
 
                     return ListView.builder(
                       padding: const EdgeInsets.all(16.0),
-                      itemCount: filteredWishlist.length + 1,  // Adding 1 to include the text at the bottom
+                      itemCount: filteredWishlist.length + 1, // Adding 1 to include the text at the bottom
                       itemBuilder: (context, index) {
                         if (index == filteredWishlist.length) {
                           // This is the last item (text)
@@ -211,8 +232,8 @@ class _WishlistPageState extends State<WishlistPage> {
                           // Return the wishlist card for each item
                           final item = filteredWishlist[index];
                           return WishlistCard(
-                            wishlist: item,  // Pass the item data
-                            request: request,  // Pass the request
+                            wishlist: item, // Pass the item data
+                            request: request, // Pass the request
                             onDelete: () => _handleDeleteWishlist(item),
                             onEdit: () => _handleEditWishlist(item, request),
                           );
