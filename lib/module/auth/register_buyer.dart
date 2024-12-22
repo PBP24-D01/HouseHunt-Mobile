@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -30,14 +32,9 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register as Buyer'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const LoginPage()));
-          },
-        ),
       ),
+      drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 2),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -195,7 +192,7 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
                       final response = await request.postJson(
-                          "http://127.0.0.1:8000/register/buyer/flutter/",
+                          "https://tristan-agra-househunt.pbp.cs.ui.ac.id/register/buyer/flutter/",
                           jsonEncode({
                             "username": username,
                             "email": email,
@@ -209,6 +206,7 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Successfully registered!'),
+                              backgroundColor: Colors.green,
                             ),
                           );
                           Navigator.pushReplacement(
@@ -221,6 +219,7 @@ class _RegisterBuyerPageState extends State<RegisterBuyerPage> {
                             SnackBar(
                               content: Text(
                                   'Failed to register! ${response['message']}'),
+                              backgroundColor: Colors.red,
                             ),
                           );
                         }

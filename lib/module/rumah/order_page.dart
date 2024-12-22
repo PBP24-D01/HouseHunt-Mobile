@@ -13,7 +13,8 @@ class OrderPage extends StatelessWidget {
 
   Future<Map<String, dynamic>> fetchOrderDetails(BuildContext context) async {
     final request = Provider.of<CookieRequest>(context, listen: false);
-    final url = 'http://127.0.0.1:8000/api/order/$houseId/';
+    final url =
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/order/$houseId/';
     final response = await request.get(url);
 
     if (response.containsKey('house')) {
@@ -25,7 +26,8 @@ class OrderPage extends StatelessWidget {
 
   Future<void> generateInvoice(BuildContext context) async {
     final request = Provider.of<CookieRequest>(context, listen: false);
-    final invoiceUrl = 'http://127.0.0.1:8000/api/invoice/$houseId/';
+    final invoiceUrl =
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/api/invoice/$houseId/';
     final invoiceResponse = await request.post(invoiceUrl, {});
 
     if (invoiceResponse.containsKey('house')) {

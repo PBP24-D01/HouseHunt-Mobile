@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
+import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:househunt_mobile/module/auth/register_buyer.dart';
@@ -23,13 +25,9 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
+      drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 0),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -88,11 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () async {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
-                      final response = await request
-                          .login("http://127.0.0.1:8000/login/flutter/", {
-                        'username': username,
-                        'password': password,
-                      });
+                      final response = await request.login(
+                          "https://tristan-agra-househunt.pbp.cs.ui.ac.id/login/flutter/",
+                          {
+                            'username': username,
+                            'password': password,
+                          });
 
                       if (request.loggedIn) {
                         String message = response['message'];
@@ -107,8 +106,10 @@ class _LoginPageState extends State<LoginPage> {
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               SnackBar(
-                                  content:
-                                      Text("$message Selamat datang, $uname.")),
+                                content:
+                                    Text("$message Selamat datang, $uname."),
+                                backgroundColor: Colors.green,
+                              ),
                             );
                         }
                       } else {

@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:househunt_mobile/module/rumah/house_details.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
+import '../rumah/models/house.dart';
 import 'CreateAppointmentPage.dart';
 import 'UpdateAppointmentPage.dart';
 
@@ -29,7 +32,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.get(
-          'http://127.0.0.1:8000/cekrumah/api/appointments/buyer/');
+          'https://tristan-agra-househunt.pbp.cs.ui.ac.id/cekrumah/api/appointments/buyer/');
       if (mounted) {
         setState(() {
           if (response['success']) {
@@ -58,6 +61,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
         backgroundColor: const Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 4),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : appointments.isEmpty
@@ -120,7 +124,7 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
                 rows: appointments.asMap().entries.map((entry) {
                   final index = entry.key;
                   final appointment = entry.value;
-                  final house = appointment['house']['name'];
+                  final house = appointment['house']['judul'];
                   final seller = appointment['seller']['username'];
                   final date = appointment['date'];
                   final startTime = appointment['start_time'];
@@ -141,8 +145,8 @@ class _CekRumahBuyerState extends State<CekRumahBuyer> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HouseDetailPage(
-                                houseId: appointment['house']['id'],
+                              builder: (context) => HouseDetailsPage(
+                                house: House.fromJson(appointment['house']),
                               ),
                             ),
                           );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/rumah/main.dart';
 import 'package:househunt_mobile/module/wishlist/models/wishlist.dart';
 import 'package:househunt_mobile/module/wishlist/wishlist_edit.dart';
+import 'package:househunt_mobile/widgets/bottom_navigation.dart';
 import 'package:househunt_mobile/widgets/drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,8 @@ class WishlistPage extends StatefulWidget {
 class _WishlistPageState extends State<WishlistPage> {
   // Fetch wishlist from the API
   Future<List<Wishlist>> fetchWishlist(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/wishlist/json/');
+    final response = await request
+        .get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/json/');
 
     // If response is null or not a Map, return empty
     if (response == null || response is! Map) {
@@ -41,7 +43,8 @@ class _WishlistPageState extends State<WishlistPage> {
   void _handleDeleteWishlist(Wishlist item) async {
     final request = context.read<CookieRequest>();
 
-    final url = 'http://127.0.0.1:8000/wishlist/delete-flutter/${item.rumahId}/';
+    final url =
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/delete-flutter/${item.rumahId}/';
 
     try {
       final response = await request.post(url, {'action': 'delete'});
@@ -65,7 +68,8 @@ class _WishlistPageState extends State<WishlistPage> {
   }
 
   /// You can implement edit functionality here
-  Future<void> _handleEditWishlist(Wishlist wishlist, CookieRequest request) async {
+  Future<void> _handleEditWishlist(
+      Wishlist wishlist, CookieRequest request) async {
     final updated = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -101,6 +105,7 @@ class _WishlistPageState extends State<WishlistPage> {
         backgroundColor: Color(0xFF4A628A),
       ),
       drawer: const LeftDrawer(),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 3),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -129,7 +134,8 @@ class _WishlistPageState extends State<WishlistPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 hintText: 'Select Priority',
               ),
               items: priorityOptions.map((String value) {
@@ -179,19 +185,22 @@ class _WishlistPageState extends State<WishlistPage> {
                               'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
                               'Rencanakan rumah terbaikmu bersama HouseHunt.',
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[500]),
                             ),
                             const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const HomePage()),
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.indigo,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
                                 textStyle: const TextStyle(fontSize: 16),
                               ),
                               child: const Text('Cari Rumah'),
@@ -209,13 +218,15 @@ class _WishlistPageState extends State<WishlistPage> {
                       if (selectedPriority == "All") {
                         return true;
                       } else {
-                        return item.prioritas.toLowerCase() == selectedPriority.toLowerCase();
+                        return item.prioritas.toLowerCase() ==
+                            selectedPriority.toLowerCase();
                       }
                     }).toList();
 
                     return ListView.builder(
                       padding: const EdgeInsets.all(16.0),
-                      itemCount: filteredWishlist.length + 1, // Adding 1 to include the text at the bottom
+                      itemCount: filteredWishlist.length +
+                          1, // Adding 1 to include the text at the bottom
                       itemBuilder: (context, index) {
                         if (index == filteredWishlist.length) {
                           // This is the last item (text)
@@ -225,7 +236,8 @@ class _WishlistPageState extends State<WishlistPage> {
                               'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
                               'Rencanakan rumah terbaikmu bersama HouseHunt.',
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[500]),
                             ),
                           );
                         } else {

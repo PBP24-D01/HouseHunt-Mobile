@@ -27,8 +27,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
   late Future<Auction> _auctionFuture;
 
   Future<List<AvailableAuction>> fetchHouses(CookieRequest request) async {
-    final response =
-        await request.get('http://127.0.0.1:8000/auction/available-houses/');
+    final response = await request.get(
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/available-houses/');
 
     var data = response;
 
@@ -42,8 +42,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
   }
 
   Future<Auction> fetchDetailAuction(CookieRequest request) async {
-    final response = await request
-        .get('http://127.0.0.1:8000/auction/get/${widget.auctionId}/');
+    final response = await request.get(
+        'https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/get/${widget.auctionId}/');
 
     var data = response;
 
@@ -204,7 +204,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                 ),
                                 const SizedBox(height: 16.0),
                                 Image.network(
-                                  'http://127.0.0.1:8000/${auction.houseImage}',
+                                  'https://tristan-agra-househunt.pbp.cs.ui.ac.id/${auction.houseImage}',
                                   width: double.infinity,
                                   height: 150,
                                   fit: BoxFit.contain,
@@ -407,7 +407,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                                   .validate()) {
                                                 final response =
                                                     await request.postJson(
-                                                  "http://127.0.0.1:8000/auction/bid/api/${auction.id}/",
+                                                  "https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/bid/api/${auction.id}/",
                                                   jsonEncode(
                                                     <String, String>{
                                                       "price":
@@ -424,6 +424,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                                             const SnackBar(
                                                       content: Text(
                                                           "Bid kamu berhasil ditambahkan!"),
+                                                      backgroundColor:
+                                                          Colors.green,
                                                     ));
                                                     refreshAuction();
                                                   } else {
@@ -433,6 +435,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                                       content: Text(response[
                                                               'message'] ??
                                                           "Terdapat kesalahan, silakan coba lagi."),
+                                                      backgroundColor:
+                                                          Colors.red,
                                                     ));
                                                   }
                                                 }
@@ -562,7 +566,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                                       onPressed: () async {
                                                         final response =
                                                             await request.get(
-                                                                "http://127.0.0.1:8000/auction/delete/api/${widget.auctionId}/");
+                                                                "https://tristan-agra-househunt.pbp.cs.ui.ac.id/auction/delete/api/${widget.auctionId}/");
 
                                                         if (context.mounted) {
                                                           if (response[
