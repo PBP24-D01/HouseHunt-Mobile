@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:househunt_mobile/module/lelang/main.dart';
 import 'package:househunt_mobile/module/lelang/models/auction.dart';
 import 'package:househunt_mobile/module/lelang/models/available_auction.dart';
@@ -80,7 +81,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.title,
+            "Lelang Detail",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -137,25 +138,39 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                   ),
                                 )),
                                 const SizedBox(height: 12.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Start Date:\n${auction.startDate}',
-                                      style: const TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                      ),
+                                Divider(
+                                  color: Colors.grey,
+                                  thickness: 1.0,
+                                  indent: 8.0,
+                                  endIndent: 8.0,
+                                ),
+                                const SizedBox(height: 8.0),
+                                Center(
+                                  child: Text(
+                                    auction.isActive
+                                        ? 'Lelang sedang berlangsung'
+                                        : auction.isExpired
+                                            ? 'Lelang telah berakhir'
+                                            : 'Lelang belum dimulai',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: auction.isActive
+                                          ? Colors.green
+                                          : auction.isExpired
+                                              ? Colors.red
+                                              : Colors.blue,
                                     ),
-                                    Text(
-                                      'End Date:\n${auction.endDate}',
-                                      style: const TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                Center(
+                                  child: TimerCountdown(
+                                    endTime: auction.isActive |
+                                            auction.isExpired
+                                        ? convertToDateTime(auction.endDate)
+                                        : convertToDateTime(auction.startDate),
+                                  ),
                                 ),
                               ],
                             ),
@@ -427,7 +442,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                         ],
                                       ),
                                     ),
-                                  if (!auction.isActive &&
+                                  if ((auction.isExpired ||
+                                          !auction.isActive) &&
                                       !request.jsonData['is_buyer'] &&
                                       auction.sellerId ==
                                           request.jsonData['id'].toString())
