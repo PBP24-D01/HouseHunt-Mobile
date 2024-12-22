@@ -22,6 +22,10 @@ class House {
   });
 
   factory House.fromJson(Map<String, dynamic> json) {
+    String? imageUrl = json['gambar'];
+    if (imageUrl != null && !imageUrl.startsWith('http')) {
+      imageUrl = 'http://localhost:8000/$imageUrl';
+    }
     return House(
       id: json['id'] ?? 0,
       title: json['judul'] ?? '',
@@ -31,7 +35,7 @@ class House {
       bedrooms: json['kamar_tidur'] ?? 0,
       bathrooms: json['kamar_mandi'] ?? 0,
       isAvailable: json['is_available'] ?? false,
-      imageUrl: json['gambar'],
+      imageUrl: imageUrl,
     );
   }
 

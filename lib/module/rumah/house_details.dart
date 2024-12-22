@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:househunt_mobile/module/rumah/models/house.dart';
 import 'package:househunt_mobile/module/rumah/edit_house.dart';
 import 'package:househunt_mobile/module/auth/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class HouseDetailsPage extends StatefulWidget {
   final House house;
@@ -24,16 +25,13 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     checkUserType();
   }
 
-  Future<void> checkUserType() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isBuyer = prefs.getBool('is_buyer') ?? false;
-    final isSeller = prefs.getBool('is_seller') ?? false;
-    final isAuthenticated = prefs.getBool('is_authenticated') ?? false;
+  void checkUserType() {
+    final request = Provider.of<CookieRequest>(context, listen: false);
 
     setState(() {
-      this.isSeller = isSeller;
-      this.isBuyer = isBuyer;
-      this.isAuthenticated = isAuthenticated;
+      isAuthenticated = request.loggedIn;
+      isBuyer = request.jsonData['is_buyer'] ?? false;
+      isSeller = !isBuyer;
     });
   }
 
@@ -48,17 +46,16 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Display the house image
+            // house img
             Container(
               width: double.infinity,
-              height: 300, // Set a fixed height for the image container
+              height: 300,
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 image: widget.house.imageUrl != null
                     ? DecorationImage(
                         image: NetworkImage(widget.house.imageUrl!),
-                        fit: BoxFit
-                            .contain, // Scale the image to fit within the container
+                        fit: BoxFit.contain,
                       )
                     : null,
               ),
@@ -143,7 +140,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   )
                 : ElevatedButton(
                     onPressed: () {
-                      // Implement buy functionality
+                      // buy
                     },
                     child: const Text('Buy House'),
                   ))

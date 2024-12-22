@@ -57,49 +57,38 @@ class _CreateHousePageState extends State<CreateHousePage> {
   Future<void> createHouse() async {
     final url = Uri.parse('http://127.0.0.1:8000/api/houses/create/');
 
-    // Create a House instance using the form data
-    House newHouse = House(
-      id: 0, // Or null if not required
-      title: title!,
-      description: description!,
-      price: price!,
-      location: location!,
-      bedrooms: bedrooms!,
-      bathrooms: bathrooms!,
-      isAvailable: isAvailable,
-      imageUrl: null, // Handle image separately
-    );
-
     var request = http.MultipartRequest('POST', url);
 
-    // Convert House object to Map<String, String>
-    Map<String, String> fields =
-        newHouse.toJson().map((key, value) => MapEntry(key, value.toString()));
+    request.fields['judul'] = title!;
+    request.fields['deskripsi'] = description!;
+    request.fields['harga'] = price!.toString();
+    request.fields['lokasi'] = location!;
+    request.fields['kamar_tidur'] = bedrooms!.toString();
+    request.fields['kamar_mandi'] = bathrooms!.toString();
+    request.fields['is_available'] = isAvailable.toString();
 
-    // Remove fields not required by the API
-    fields.remove('id');
-    fields.remove('imageUrl');
-
-    // Add fields to the request
-    request.fields.addAll(fields);
-
-    // Add image file if selected
+    // img
     if (imageFile != null) {
       request.files
           .add(await http.MultipartFile.fromPath('gambar', imageFile!.path));
     }
 
-    // Send the request
-    var response = await request.send();
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
 
-    // Handle the response
     if (response.statusCode == 201) {
+      // this should get id by django
+      var responseData = json.decode(response.body);
+      int newHouseId = responseData['id'];
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('House created successfully!')),
+        SnackBar(
+            content: Text('House created successfully with ID: $newHouseId')),
       );
+      Navigator.pop(context); // return
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create house.')),
+        SnackBar(content: Text('Failed to create house: ${response.body}')),
       );
     }
   }
@@ -222,9 +211,16 @@ class _CreateHousePageState extends State<CreateHousePage> {
                           child: Text('Pick Image'),
                         ),
                         if (imageFile != null)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Image.file(imageFile!),
+                          Container(
+                            height: 200,
+                            width: double.infinity,
+                            margin: EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: FileImage(imageFile!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         const SizedBox(height: 10),
                         TextFormField(
