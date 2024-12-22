@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<House> houses = [];
+  List<int> wishlistIds = [];
   List<String> locations = [];
   List<String> priceRanges = [];
   List<String> bedroomOptions = [];
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     fetchFilterOptions();
     fetchHouses();
+    fetchWishlist();
   }
 
   Future<void> fetchFilterOptions() async {
@@ -75,6 +77,98 @@ class _HomePageState extends State<HomePage> {
       });
     } else {
       throw Exception('Failed to load houses');
+    }
+  }
+
+  bool isLoading = false;
+
+  Future<void> toggleWishlist(int houseId) async {
+    final request = context.read<CookieRequest>();
+    if (!request.loggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to manage your wishlist.')),
+      );
+      return;
+    }
+
+    // Prevent multiple simultaneous requests
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Always use the add endpoint as it handles both add and remove
+      final url = 'http://127.0.0.1:8000/wishlist/add-flutter/$houseId/';
+      
+      final response = await request.post(url, {});
+      print(response);
+
+      if (response['status'] == 'success') {
+        // Update wishlist based on current state
+        setState(() {
+          if (wishlistIds.contains(houseId)) {
+            wishlistIds.remove(houseId);
+          } else {
+            wishlistIds.add(houseId);
+          }
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'])),
+        );
+      } else if (response['status'] == 'unauthorized') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Only buyers can access this feature.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Failed to update wishlist')),
+        );
+        // Refresh wishlist to ensure UI is in sync with server
+        await fetchWishlist();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating wishlist: $e')),
+      );
+      // Refresh wishlist to ensure UI is in sync with server
+      await fetchWishlist();
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchWishlist() async {
+    final request = context.read<CookieRequest>();
+    if (!request.loggedIn) {
+      setState(() {
+        wishlistIds = [];
+      });
+      return;
+    }
+
+    try {
+      final response = await request.get('http://127.0.0.1:8000/wishlist/json/');
+      // The response here is a Map<dynamic, dynamic>
+
+      // 1. Verify the JSON keys you’re expecting
+      if (response.containsKey('wishlists')) {
+        final wishlistData = response['wishlists'] as List;
+        setState(() {
+          wishlistIds = wishlistData
+              .map<int>((item) => item['rumah_id'] as int)
+              .toList();
+        });
+      }
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching wishlist: $e')),
+      );
     }
   }
 
@@ -206,7 +300,14 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: houses.length,
               itemBuilder: (context, index) {
-                return HouseCard(house: houses[index]);
+                final House house = houses[index];
+                final bool isWishlisted = wishlistIds.contains(house.id);
+
+                return HouseCard(
+                  house: house,
+                  isWishlisted: isWishlisted,
+                  onToggleWishlist: toggleWishlist,
+                );
               },
             ),
           ),
@@ -218,8 +319,15 @@ class _HomePageState extends State<HomePage> {
 
 class HouseCard extends StatelessWidget {
   final House house;
+  final bool isWishlisted;
+  final Function(int houseId) onToggleWishlist;
 
-  const HouseCard({required this.house});
+  const HouseCard({
+    Key? key,
+    required this.house,
+    required this.isWishlisted,
+    required this.onToggleWishlist,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -247,14 +355,30 @@ class HouseCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  house.title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Title + Heart Icon
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      house.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    // Inside HouseCard build method
+                    IconButton(
+                      icon: Icon(
+                        isWishlisted ? Icons.favorite : Icons.favorite_border,
+                        color: isWishlisted ? Colors.red : Colors.black,
+                      ),
+                      onPressed: () => onToggleWishlist(house.id),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 5),
+
+                // Location
                 Text(
                   house.location,
                   style: const TextStyle(
@@ -263,6 +387,8 @@ class HouseCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
+
+                // Price
                 Text(
                   'Rp ${house.price}',
                   style: const TextStyle(
@@ -272,6 +398,8 @@ class HouseCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
+
+                // Bedrooms and Bathrooms
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -292,6 +420,8 @@ class HouseCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
+
+                // View Details Button
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
