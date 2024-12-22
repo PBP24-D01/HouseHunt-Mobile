@@ -424,6 +424,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                                             const SnackBar(
                                                       content: Text(
                                                           "Bid kamu berhasil ditambahkan!"),
+                                                      backgroundColor:
+                                                          Colors.green,
                                                     ));
                                                     refreshAuction();
                                                   } else {
@@ -433,6 +435,8 @@ class _AuctionDetailState extends State<AuctionDetail> {
                                                       content: Text(response[
                                                               'message'] ??
                                                           "Terdapat kesalahan, silakan coba lagi."),
+                                                      backgroundColor:
+                                                          Colors.red,
                                                     ));
                                                   }
                                                 }
