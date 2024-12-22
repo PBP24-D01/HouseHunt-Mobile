@@ -148,15 +148,14 @@ class WishlistCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // Edit Button
-                TextButton.icon(
+                IconButton(
                   onPressed: onEdit,
-                  icon: const Icon(Icons.edit, color: Colors.blue),
-                  label: const Text("Edit"),
+                  icon: const Icon(Icons.edit, color: Colors.black),
                 ),
                 // Delete Button
                 IconButton(
                   icon: const Icon(
-                    Icons.delete,
+                    Icons.favorite,
                     color: Colors.red,
                   ),
                   onPressed: () {
