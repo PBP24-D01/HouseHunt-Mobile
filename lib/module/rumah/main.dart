@@ -92,7 +92,6 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    // Prevent multiple simultaneous requests
     if (isLoading) return;
 
     setState(() {
@@ -100,11 +99,9 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      // Always use the add endpoint as it handles both add and remove
-      final url = 'http://127.0.0.1:8000/wishlist/add-flutter/$houseId/';
+      final url = 'https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/add-flutter/$houseId/';
       
       final response = await request.post(url, {});
-      print(response);
 
       if (response['status'] == 'success') {
         // Update wishlist based on current state
@@ -153,7 +150,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
-      final response = await request.get('http://127.0.0.1:8000/wishlist/json/');
+      final response = await request.get('https://tristan-agra-househunt.pbp.cs.ui.ac.id/wishlist/json/');
       // The response here is a Map<dynamic, dynamic>
 
       // 1. Verify the JSON keys you’re expecting
