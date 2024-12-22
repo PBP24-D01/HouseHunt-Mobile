@@ -81,6 +81,10 @@ class _WishlistPageState extends State<WishlistPage> {
     }
   }
 
+  // Filter options
+  List<String> priorityOptions = ["All", "High", "Medium", "Low"];
+  String selectedPriority = "All";
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -93,95 +97,127 @@ class _WishlistPageState extends State<WishlistPage> {
       drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<Wishlist>>(
-          future: fetchWishlist(request),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              // If the user has no wishlists
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.favorite_border,
-                        size: 80,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Kamu belum punya wishlist rumah!',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
+        child: Column(
+          children: [
+            // Filter Dropdown
+            DropdownButton<String>(
+              value: selectedPriority,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedPriority = newValue!;
+                });
+              },
+              items: priorityOptions.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: FutureBuilder<List<Wishlist>>(
+                future: fetchWishlist(request),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    // If the user has no wishlists
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.favorite_border,
+                              size: 80,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Kamu belum punya wishlist rumah!',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
+                              'Rencanakan rumah terbaikmu bersama HouseHunt.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const HomePage()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigo,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                textStyle: const TextStyle(fontSize: 16),
+                              ),
+                              child: const Text('Cari Rumah'),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
-                        'Rencanakan rumah terbaikmu bersama HouseHunt.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const HomePage()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          textStyle: const TextStyle(fontSize: 16),
-                        ),
-                        child: const Text('Cari Rumah'),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              // We have wishlist data to display
-              final wishlistItems = snapshot.data!;
-              return ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: wishlistItems.length + 1,  // Adding 1 to include the text at the bottom
-                itemBuilder: (context, index) {
-                  if (index == wishlistItems.length) {
-                    // This is the last item (text)
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Text(
-                        'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
-                        'Rencanakan rumah terbaikmu bersama HouseHunt.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                       ),
                     );
                   } else {
-                    // Return the wishlist card for each item
-                    final item = wishlistItems[index];
-                    return WishlistCard(
-                      wishlist: item,  // Pass the item data
-                      request: request,  // Pass the request
-                      onDelete: () => _handleDeleteWishlist(item),
-                      onEdit: () => _handleEditWishlist(item, request),
+                    // We have wishlist data to display
+                    final wishlistItems = snapshot.data!;
+
+                    // Filter the wishlist based on the selected priority
+                    final filteredWishlist = wishlistItems.where((item) {
+                      if (selectedPriority == "All") {
+                        return true;
+                      } else {
+                        return item.prioritas.toLowerCase() == selectedPriority.toLowerCase();
+                      }
+                    }).toList();
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: filteredWishlist.length + 1,  // Adding 1 to include the text at the bottom
+                      itemBuilder: (context, index) {
+                        if (index == filteredWishlist.length) {
+                          // This is the last item (text)
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: Text(
+                              'Rumah yang nyaman adalah rumah yang dapat memberi ketenangan. '
+                              'Rencanakan rumah terbaikmu bersama HouseHunt.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                            ),
+                          );
+                        } else {
+                          // Return the wishlist card for each item
+                          final item = filteredWishlist[index];
+                          return WishlistCard(
+                            wishlist: item,  // Pass the item data
+                            request: request,  // Pass the request
+                            onDelete: () => _handleDeleteWishlist(item),
+                            onEdit: () => _handleEditWishlist(item, request),
+                          );
+                        }
+                      },
                     );
                   }
                 },
-              );
-            }
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );
